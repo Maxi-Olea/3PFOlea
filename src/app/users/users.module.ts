@@ -4,11 +4,13 @@ import { UsersRoutingModule } from './users-routing.module';
 import { SharedModule } from '../shared/shared.module';
 
 //Componentes
-import { LoginComponent } from './login/login.component';
+import { LoginComponent } from './components/login/login.component';
+import { UsersListComponent } from './components/users-list/users-list.component';
 
 @NgModule({
   declarations: [
-    LoginComponent
+    LoginComponent,
+    UsersListComponent
   ],
   imports: [
     CommonModule,

@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { UserService } from 'src/app/core/services/user.service';
 
@@ -18,7 +19,8 @@ export class LoginComponent implements OnInit, OnDestroy {
   constructor(
     private fb: FormBuilder,
     private _snackBar: MatSnackBar,
-    private userService: UserService
+    private userService: UserService,
+    private router: Router
   ) { 
     this.loginForm = this.fb.group({
       username: ['', [Validators.required, Validators.minLength(4), Validators.maxLength(10)]],
@@ -36,6 +38,7 @@ export class LoginComponent implements OnInit, OnDestroy {
         console.log('esta logueado?: ', res)
         if(res) {
           console.log('nevego a la otra dirección')
+          this.router.navigate(['/users']);
         }
       })
     );
@@ -50,6 +53,7 @@ export class LoginComponent implements OnInit, OnDestroy {
         console.log('Respuesta del servicio ', res)
         if(res) {
           this.openToast('Logueo Exitoso')
+          this.router.navigate(['/users']);
         } else {
           this.openToast('El usuario y/o la contraseña ingresadas son incorrectas')
         }

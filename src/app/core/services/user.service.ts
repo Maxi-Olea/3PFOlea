@@ -26,10 +26,21 @@ export class UserService {
   },];
 
   userData!:User | null;
+  usersData:User[] = [];
 
 
   getUsers():Observable<User[]> { //Devuelve un array de los usuarios y sus roles
-    return of(this.users)
+    this.users.forEach(user => {
+      let userData = {
+        id: user.id,
+        username: user.username,
+        name: user.name,
+        lastname: user.lastname,
+        rol: user.rol
+      }
+      this.usersData.push(userData)
+    });
+    return of(this.usersData)
   }
 
   getIsLoggedIn():Observable<boolean> {
