@@ -30,6 +30,7 @@ export class UserService {
 
 
   getUsers():Observable<User[]> { //Devuelve un array de los usuarios y sus roles
+    this.usersData = [];
     this.users.forEach(user => {
       let userData = {
         id: user.id,
@@ -69,6 +70,23 @@ export class UserService {
 
   getUserData():Observable<User|null> {
     return of(this.userData);
+  }
+
+  getUserById(id:number):Observable<User> {
+    let user = this.users.find((usr) => usr.id === id)
+    if(user) {
+      console.log(user)
+      let userData = {
+        id: user.id,
+        username: user.username,
+        name: user.name,
+        lastname: user.lastname,
+        rol: user.rol
+      }
+      return of(userData)
+    }else {
+      return of(this.userData!)
+    }
   }
 
   getTime():Observable<string> {

@@ -4,13 +4,13 @@ import { UsersRoutingModule } from './users-routing.module';
 import { SharedModule } from '../shared/shared.module';
 
 //Componentes
-import { LoginComponent } from './components/login/login.component';
 import { UsersListComponent } from './components/users-list/users-list.component';
+import { UserDetailsComponent } from './components/user-details/user-details.component';
 
 @NgModule({
   declarations: [
-    LoginComponent,
-    UsersListComponent
+    UsersListComponent,
+    UserDetailsComponent
   ],
   imports: [
     CommonModule,
@@ -18,7 +18,6 @@ import { UsersListComponent } from './components/users-list/users-list.component
     SharedModule
   ],
   exports: [
-    LoginComponent
   ]
 })
 export class UsersModule { }

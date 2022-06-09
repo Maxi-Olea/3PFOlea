@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
+import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { UserService } from 'src/app/core/services/user.service';
 import { User } from 'src/app/shared/interfaces/user.interface';
@@ -23,11 +24,25 @@ export class UsersListComponent implements OnInit, OnDestroy {
   
   constructor(
     private userService: UserService,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
+    this.isLoggedIn();
     this.getUserData();
     this.getUsers();
+  }
+
+  isLoggedIn() {
+    this.subscriptions.add(
+      this.userService.getIsLoggedIn().subscribe((res) => {
+        console.log('esta logueado?: ', res)
+        if(!res) {
+          console.log('nevego a la otra dirección')
+          this.router.navigate(['/']);
+        }
+      })
+    );
   }
 
   getUserData() {
@@ -50,6 +65,7 @@ export class UsersListComponent implements OnInit, OnDestroy {
 
   onClickDetails(user:User){
     console.log('Usuario: ', user);
+    this.router.navigate([`/users/${user.id}`])
   }
 
   onClickEdit(user:User){
