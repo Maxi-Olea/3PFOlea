@@ -38,7 +38,7 @@ export class LoginComponent implements OnInit, OnDestroy {
         console.log('esta logueado?: ', res)
         if(res) {
           console.log('nevego a la otra dirección')
-          this.router.navigate(['/users']);
+          this.router.navigate(['/students']);
         }
       })
     );
@@ -52,7 +52,7 @@ export class LoginComponent implements OnInit, OnDestroy {
       this.userService.checkLogin(username, password).subscribe((res) => {
         console.log('Respuesta del servicio ', res)
         if(res) {
-          this.router.navigate(['/users']);
+          this.router.navigate(['/students']);
         } else {
           this.openToast('El usuario y/o la contraseña ingresadas son incorrectas')
         }

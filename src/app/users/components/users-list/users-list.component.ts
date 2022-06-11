@@ -99,13 +99,13 @@ export class UsersListComponent implements OnInit, OnDestroy {
     })
   }
 
-  onUpdateDelete(el:any) {
+  onUpdateDelete(element:any) {
     /* Una vez editado por el delete, 
     se modifican los ids (para evitar errores en delete) y ademas hace un update del valor de data */
-    el.forEach((el:any,index:number)=>{
+    element.forEach((el:any,index:number)=>{
       el['id']=index+1
     })
-    this.usersData=el;
+    this.usersData=element;
   }
 
   ngOnDestroy(): void {

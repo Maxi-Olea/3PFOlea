@@ -4,6 +4,7 @@ import { MaterialModule } from '../modules/material.module';
 import { RolPipe } from './pipes/rol.pipe';
 import { TitlesDirective } from './directives/titles.directive';
 import { ItemNameDirective } from './directives/item-name.directive';
+import { CourseIconPipe } from './pipes/course-icon.pipe';
 
 
 
@@ -11,7 +12,8 @@ import { ItemNameDirective } from './directives/item-name.directive';
   declarations: [
     RolPipe,
     TitlesDirective,
-    ItemNameDirective
+    ItemNameDirective,
+    CourseIconPipe
   ],
   imports: [
     ReactiveFormsModule,
@@ -21,6 +23,7 @@ import { ItemNameDirective } from './directives/item-name.directive';
     ReactiveFormsModule,
     MaterialModule,
     RolPipe,
+    CourseIconPipe,
     TitlesDirective,
     ItemNameDirective
   ]
