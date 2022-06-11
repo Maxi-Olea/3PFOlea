@@ -19,14 +19,15 @@ export class UserService {
   },{
     id: 2,
     username: 'User01',
-    name: 'User',
-    lastname: 'Olea',
+    name: 'Juan',
+    lastname: 'Perez',
     password: 'user1234',
     rol: 'user'
   },];
 
   userData!:User | null;
   usersData:User[] = [];
+  userToEdit!:User | null;
 
 
   getUsers():Observable<User[]> { //Devuelve un array de los usuarios y sus roles
@@ -37,6 +38,7 @@ export class UserService {
         username: user.username,
         name: user.name,
         lastname: user.lastname,
+        email: user.email,
         rol: user.rol
       }
       this.usersData.push(userData)
@@ -81,12 +83,58 @@ export class UserService {
         username: user.username,
         name: user.name,
         lastname: user.lastname,
+        email: user.email,
         rol: user.rol
       }
       return of(userData)
     }else {
       return of(this.userData!)
     }
+  }
+
+  getUserToEdit():Observable<User | null> {
+    return of(this.userToEdit);
+  }
+
+  setUserToEdit(user:User | null):Promise<any> {
+    return new Promise((resolve, reject) => {
+      if(user || user === null) {
+        console.log('El user a editar es: ', user)
+        this.userToEdit = user;
+        return resolve(true)
+      }else {
+        return reject({ message: 'No se pudo setear el userToEdit' })
+      }
+    })
+  }
+
+  setUsers(user:User, isToEdit:boolean):Promise<any> {    
+    return new Promise((resolve, reject) => {
+      if(this.users.length > 0) {
+        console.log('la lista de usuario recibido es: ', user)
+        if(isToEdit){
+          let indexOfUser = this.users.findIndex((usr) => usr.id === user.id);
+          this.users[indexOfUser] = user;
+          console.log('users actualizado: ', this.users)
+        } else {
+          this.users.push(user);
+        }
+        return resolve({message: 'Se agrego la información del usuario'})
+      }else {
+        return reject({ message: 'No se pudo actualizar la información de los usuarios'})
+      }
+    })
+  }
+
+  deleteUser(usersData:User[]):Promise<any> {
+    return new Promise((resolve, reject) => {
+      if(this.users.length > 0) {
+        this.users = usersData;
+        return resolve({ message: 'Usuario eliminado' })
+      } else {
+        return reject({ message: 'No se pudo eliminar el usuario' })
+      }
+    })
   }
 
   getTime():Observable<string> {

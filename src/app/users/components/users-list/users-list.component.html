@@ -1,7 +1,12 @@
 <div class="container py-3">
 
-    <h3 class="fs-4 text-white-50">Listado de Estudiantes</h3>
-        
+    <div class="d-flex align-items-end">
+      <h1 appTitles>Listado de usuarios</h1>
+    </div>
+    <button [ngClass]="usr!.rol === 'admin' ? '' : 'd-none'" (click)="onClickAdd()" class="m-2" mat-fab color="primary" aria-label="add button" matTooltip="Agregar un nuevo usuario">
+      <mat-icon>add</mat-icon>
+    </button>
+    
     <table #table mat-table [dataSource]="usersData" class="mat-elevation-z8 px-0 w-100" aria-describedby="Tabla de Usuarios">
     
       <!-- Id Column -->
