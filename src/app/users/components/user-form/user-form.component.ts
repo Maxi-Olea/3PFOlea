@@ -88,7 +88,7 @@ export class UserFormComponent implements OnInit, OnDestroy {
     this.userService.setUsers(usr, isToEdit)
     .then((res) => {
       this._snackBar.open(res.message, 'Ok')
-      this.router.navigate(['/users'])
+      this.router.navigate(['dashboard/users'])
     })
     .catch((res) => {
       this._snackBar.open(res.message, 'Cerrar')

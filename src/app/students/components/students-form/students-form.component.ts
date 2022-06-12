@@ -70,7 +70,7 @@ export class StudentsFormComponent implements OnInit, OnDestroy {
     this.studentService.setStudents(students)
     .then((res) => {
       this._snackBar.open(res.message, 'Ok');
-      this.router.navigate(['/students']);
+      this.router.navigate(['dashboard/students']);
     })
     .catch((error) => this._snackBar.open(error.message, 'Cerrar'));
   }

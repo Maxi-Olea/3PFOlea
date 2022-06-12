@@ -44,8 +44,8 @@
                     <mat-list>                    
                         <div class="row" *ngFor="let course of student.cursos">
                             <mat-list-item>
-                                <div class="col-1"><em class="fs-2 fa-brands fa-{{ course | courseIcon }}"></em></div>
-                                <div class="col-11">{{ course }}</div>  
+                                <div class="col-1"><em class="fs-2 fa-brands fa-{{ course.course | courseIcon }}"></em></div>
+                                <div class="col-11">{{ course.course }}</div>  
                             </mat-list-item>
                             <mat-divider></mat-divider>
                         </div>

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { from, Observable, of } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { Student } from 'src/app/shared/interfaces/student.interface';
 
 @Injectable({
@@ -8,21 +8,19 @@ import { Student } from 'src/app/shared/interfaces/student.interface';
 export class StudentService {
 
   studentsData: Student[] = [ //Datos de los estudiantes
-    {id: 1, name: 'Juan', lastname: 'Lopez', email: 'jlopez@mail.com', cursos: ['Angular']},
-    {id: 2, name: 'Pedro', lastname: 'Perez', email: 'pperez@mail.com', cursos: ['Angular', 'Node-JS']}
+    {id: 1, name: 'Juan', lastname: 'Lopez', email: 'jlopez@mail.com', cursos: [{id: 1, course: 'Angular' }, {id:2, course: 'React'}]},
+    {id: 2, name: 'Pedro', lastname: 'Perez', email: 'pperez@mail.com', cursos: [{id: 1, course: 'Angular' }, {id:4, course: 'Node-JS'}]}
   ];
 
   studentToEdit!: Student | null;
 
-  constructor() { }
-
+  
   getStudents():Observable<Student[]> {
     return of(this.studentsData);
   }
 
   setStudents(students:Student[]): Promise<any> {
     return new Promise((resolve, reject) => {
-      //this.studentToEdit = null;
       if(students.length > 0) {
         console.log('la lista de estudiantes actualizada es: ', students)
         this.studentsData = students;

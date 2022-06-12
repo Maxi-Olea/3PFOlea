@@ -24,7 +24,7 @@ export class StudentsListComponent implements OnInit, OnDestroy {
 
   studentsData!:Student[];
 
-  displayedColumns = ['id', 'name', 'actions'];
+  displayedColumns = ['id', 'name', 'email', 'actions'];
   dataSource = new MatTableDataSource(this.studentsData);
 
   constructor(
@@ -83,7 +83,7 @@ export class StudentsListComponent implements OnInit, OnDestroy {
       console.log(res)
       //this.router.navigate(['/'])
     })
-    .catch((error) => console.log('Error: ', error.message));
+    .catch((error) => this._snackBar.open(error.message, 'Cerrar'));
   }
 
   onClickAdd() {
