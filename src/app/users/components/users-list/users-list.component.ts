@@ -56,7 +56,7 @@ export class UsersListComponent implements OnInit, OnDestroy {
     this.userService.setUserToEdit(null)
     .then((res) => {
       if(res) {
-        this.router.navigate(['/users/userform']);
+        this.router.navigate(['dashboard/users/userform']);
       }
     })
     .catch((error) => {
@@ -66,7 +66,7 @@ export class UsersListComponent implements OnInit, OnDestroy {
 
   onClickDetails(user:User){
     console.log('Usuario: ', user);
-    this.router.navigate([`/users/${user.id}`])
+    this.router.navigate([`dashboard/users/${user.id}`])
   }
 
   onClickEdit(user:User){
@@ -74,7 +74,7 @@ export class UsersListComponent implements OnInit, OnDestroy {
     this.userService.setUserToEdit(user)
     .then((res) => {
       console.log(res);
-      this.router.navigate(['/users/userform']);
+      this.router.navigate(['dashboard/users/userform']);
     })
     .catch((res) => {
       this._snackBar.open(res.message, 'Cerrar');

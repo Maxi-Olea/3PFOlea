@@ -67,7 +67,7 @@ export class StudentsListComponent implements OnInit, OnDestroy {
   }
 
   onClickDetails(student:Student) {
-    this.router.navigate([`students/${student.id}`])
+    this.router.navigate([`dashboard/students/${student.id}`])
   }
 
   onDeleteStudent(el:any) {
@@ -88,15 +88,15 @@ export class StudentsListComponent implements OnInit, OnDestroy {
 
   onClickAdd() {
     this.studentService.setStudentToEdit(null)
-    .then((res) => this.router.navigate(['students/studentform']))
+    .then(() => this.router.navigate(['dashboard/students/studentform']))
     .catch((error) => this._snackBar.open(error.message, 'Cerrar'))
   }
 
   onClickEdit(student:Student) { //Actualiza el estudiante a editar en el servicio
     student.lastname = student.lastname[0] + student.lastname.slice(1).toLowerCase(); //Vuelve a dejar el apellido en PascalCase
     this.studentService.setStudentToEdit(student)
-    .then((res) => { //Se actualizo en el servicio el studentToEdit
-      this.router.navigate(['students/studentform']);
+    .then(() => { //Se actualizo en el servicio el studentToEdit
+      this.router.navigate(['dashboard/students/studentform']);
     })
     .catch((error) => {
       this._snackBar.open(error.message, 'Cerrar');

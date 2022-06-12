@@ -66,7 +66,7 @@ export class StudentsDetailsComponent implements OnInit, OnDestroy {
 
   onClickEdit() {
     this.studentService.setStudentToEdit(this.student)
-    .then((res) => {
+    .then(() => {
       this.router.navigate(['/students/studentform']);
     })
     .catch((error) => this._snackbar.open(error.message, 'Cerrar'));
@@ -77,7 +77,7 @@ export class StudentsDetailsComponent implements OnInit, OnDestroy {
     this.studentsData.splice(indexOfStudent, 1)
     this.onUpdateDelete(this.studentsData)
     this.studentService.setStudents(this.studentsData)
-    .then((res) => this.router.navigate(['students']))
+    .then(() => this.router.navigate(['students']))
     .catch((error) => this._snackbar.open(error.message, 'Cerrar'));
   }
 

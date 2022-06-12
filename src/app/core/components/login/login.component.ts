@@ -38,7 +38,7 @@ export class LoginComponent implements OnInit, OnDestroy {
         console.log('esta logueado?: ', res)
         if(res) {
           console.log('nevego a la otra dirección')
-          this.router.navigate(['/students']);
+          this.router.navigate(['/dashboard']);
         }
       })
     );
