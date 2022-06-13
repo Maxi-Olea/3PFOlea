@@ -15,6 +15,7 @@ export class UserService {
     username: 'Admin',
     name: 'Maxi',
     lastname: 'Olea',
+    email: 'molea@mail.com',
     password: 'admin1234',
     rol: 'admin'
   },{
@@ -22,6 +23,7 @@ export class UserService {
     username: 'User01',
     name: 'Juan',
     lastname: 'Perez',
+    email: 'jperez@mail.com',
     password: 'user1234',
     rol: 'user'
   },];

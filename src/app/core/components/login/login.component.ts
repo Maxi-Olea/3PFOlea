@@ -52,7 +52,7 @@ export class LoginComponent implements OnInit, OnDestroy {
       this.userService.checkLogin(username, password).subscribe((res) => {
         console.log('Respuesta del servicio ', res)
         if(res) {
-          this.router.navigate(['/students']);
+          this.router.navigate(['dashboard']);
         } else {
           this.openToast('El usuario y/o la contraseña ingresadas son incorrectas')
         }

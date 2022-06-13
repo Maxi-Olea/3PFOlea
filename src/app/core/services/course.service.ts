@@ -8,12 +8,12 @@ import { Courses } from 'src/app/shared/interfaces/course.interface';
 export class CourseService {
 
   courses: Courses[] = [
-    {id: 1, course: 'Angular'},
-    {id:2, course: 'React'},
-    {id:3, course: 'VueJS'},
-    {id:4, course: 'Node-JS'},
-    {id:5, course: 'Python'},
-    {id:6, course: 'Java'},
+    {id: 1, course: 'Angular', professor: 'Juan Perez', email:'jperez@mail.com'},
+    {id:2, course: 'React', professor: 'José Garcia', email:'jgarcia@mail.com'},
+    {id:3, course: 'VueJS', professor: 'Luis Suarez', email:'lsuarez@mail.com'},
+    {id:4, course: 'Node-JS', professor: 'Marcos Juarez', email:'mjuarez@mail.com'},
+    {id:5, course: 'Python', professor: 'Pedro Ramires', email:'pramires@mail.com'},
+    {id:6, course: 'Java', professor: 'Juan Perez', email:'jperez@mail.com'},
   ];
 
   courseToEdit!: Courses | null;
