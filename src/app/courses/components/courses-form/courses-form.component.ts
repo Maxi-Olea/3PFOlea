@@ -59,6 +59,9 @@ export class CoursesFormComponent implements OnInit, OnDestroy {
       index = courses.length + 1;
       this.courseForm.value['id'] = index;
       courses.push(this.courseForm.value);
+    } else if(courses.length === 0) {
+      this.courseForm.value['id'] = index;
+      courses.push(this.courseForm.value);
     }
 
     if(this.courseToEdit) {

@@ -8,8 +8,8 @@ import { Student } from 'src/app/shared/interfaces/student.interface';
 export class StudentService {
 
   studentsData: Student[] = [ //Datos de los estudiantes
-    {id: 1, name: 'Juan', lastname: 'Lopez', email: 'jlopez@mail.com', cursos: [{id: 1, course: 'Angular' }, {id:2, course: 'React'}]},
-    {id: 2, name: 'Pedro', lastname: 'Perez', email: 'pperez@mail.com', cursos: [{id: 1, course: 'Angular' }, {id:4, course: 'Node-JS'}]}
+    {id: 1, name: 'Juan', lastname: 'Lopez', email: 'jlopez@mail.com', birthday: new Date('1998, 11, 25'), cursos: [{id: 1, course: 'Angular' }, {id:2, course: 'React'}]},
+    {id: 2, name: 'Pedro', lastname: 'Perez', email: 'pperez@mail.com', birthday: new Date('1990, 11, 25'), cursos: [{id: 1, course: 'Angular' }, {id:4, course: 'Node-JS'}]}
   ];
 
   studentToEdit!: Student | null;
@@ -21,7 +21,7 @@ export class StudentService {
 
   setStudents(students:Student[]): Promise<any> {
     return new Promise((resolve, reject) => {
-      if(students.length > 0) {
+      if(students.length > 0 || students !== null) {
         console.log('la lista de estudiantes actualizada es: ', students)
         this.studentsData = students;
         return resolve({ message: 'Se actualizo la información de los estudiantes correctamente' })

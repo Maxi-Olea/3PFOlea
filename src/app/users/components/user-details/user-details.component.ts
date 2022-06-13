@@ -67,7 +67,7 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
     this.userService.setUserToEdit(this.user)
     .then((res) => {
       console.log(res);
-      this.router.navigate(['/users/userform']);
+      this.router.navigate(['dashboard/users/userform']);
     })
     .catch((res) => {
       this._snackBar.open(res.message, 'Cerrar');
@@ -85,7 +85,7 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
     this.userService.deleteUser(this.usersData)
     .then((res) => {
       this._snackBar.open(res.message, 'OK')
-      this.router.navigate(['/users']);
+      this.router.navigate(['dashboard/users']);
     })
     .catch((error) => {
       this._snackBar.open(error.message, 'Cerrar')

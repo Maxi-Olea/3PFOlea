@@ -55,13 +55,18 @@ export class StudentsFormComponent implements OnInit, OnDestroy {
       })
     );
     let index = 1;
-    if(students.length>0 && !this.studentToEdit) {
+    if(students.length>0 && !this.studentToEdit) { // si agregamos un alumno nuevo
       index = students.length + 1;
       this.studentForm.value['id'] = index;
+      this.studentForm.value['cursos'] = [];
+      students.push(this.studentForm.value);
+    } else if(students.length === 0) { // si es el primer alumno
+      this.studentForm.value['id'] = index;
+      this.studentForm.value['cursos'] = [];
       students.push(this.studentForm.value);
     }
 
-    if(this.studentToEdit) {
+    if(this.studentToEdit) { // si estamos editando un alumno existente
       let indexOfStudent = students.findIndex((student) => student.id === this.studentToEdit!.id);
       this.studentForm.value['id'] = this.studentToEdit.id;
       this.studentForm.value['cursos'] = this.studentToEdit.cursos;

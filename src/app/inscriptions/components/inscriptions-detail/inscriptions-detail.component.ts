@@ -1,24 +1,32 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatTable } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { StudentService } from 'src/app/core/services/student.service';
 import { UserService } from 'src/app/core/services/user.service';
+import { Courses } from 'src/app/shared/interfaces/course.interface';
 import { Student } from 'src/app/shared/interfaces/student.interface';
 import { User } from 'src/app/shared/interfaces/user.interface';
 
 @Component({
-  selector: 'app-students-details',
-  templateUrl: './students-details.component.html',
-  styleUrls: ['./students-details.component.scss']
+  selector: 'app-inscriptions-detail',
+  templateUrl: './inscriptions-detail.component.html',
+  styleUrls: ['./inscriptions-detail.component.scss']
 })
-export class StudentsDetailsComponent implements OnInit, OnDestroy {
+export class InscriptionsDetailComponent implements OnInit, OnDestroy {
 
   subscriptions: Subscription = new Subscription();
+
   user!:User | null; //Datos del usuario logueado
+
+  @ViewChild('table') table!: MatTable<any>;
 
   student!: Student; //Estudiante a mostrar detalles
   studentsData!: Student[]; //Listado de estudiantes
+
+  displayedColumns = ['id', 'name', 'actions'];
+  //dataSource = new MatTableDataSource(this.student.cursos!);
 
   constructor(
     private route: ActivatedRoute,
@@ -64,36 +72,34 @@ export class StudentsDetailsComponent implements OnInit, OnDestroy {
     }
   }
 
-  onClickEdit() {
-    this.studentService.setStudentToEdit(this.student)
-    .then(() => {
-      this.router.navigate(['dashboard/students/studentform']);
-    })
-    .catch((error) => this._snackBar.open(error.message, 'Cerrar'));
-  }
-
-  onDeleteStudent() {
-    let indexOfStudent = this.studentsData.findIndex((x) => x.id === this.student.id)
-    this.studentsData.splice(indexOfStudent, 1)
-    this.onUpdateDelete(this.studentsData)
-    this.studentService.setStudents(this.studentsData)
-    .then(() => this.router.navigate(['students']))
-    .catch((error) => this._snackBar.open(error.message, 'Cerrar'));
-  }
-
-  onUpdateDelete(element:any) {
-    /* Una vez editado por el delete, 
-    se modifican los ids (para evitar errores en delete) y ademas hace un update del valor de data */
-    element.forEach((el:any,index:number)=>{
-      el['id']=index+1
-    })
-    this.studentsData=element;
-  }
-
-  onClickInscription() {
+  onClickAdd() {
     this.studentService.setStudentToEdit(this.student)
     .then(() => this.router.navigate(['dashboard/inscriptions/addinscription']))
     .catch((error) => this._snackBar.open(error.message, 'Cerrar'))
+  }
+
+  onClickDetails(course: Courses) {
+    this.router.navigate([`dashboard/courses/${course.id}`])
+  }
+
+  onDeleteInscription(course: Courses) {
+    /* Se busca el elemento por el id del curso en el array de cursos del estudiante,
+    Se elimina por el index, y luego usando el ViewChild, se renderiza de nuevo la tabla.
+    Por ultimo, se actualiza el estudiante en el listado de estudiantes y se setean en el servicio*/
+    let courses: Courses[] = this.student.cursos!;
+    let index = courses.findIndex((x) => x.id === course.id);
+    courses.splice(index,1);
+    this.table.renderRows();
+    this.student.cursos = courses;
+    this.updateStudent();
+    this.studentService.setStudents(this.studentsData)
+    .then((res) => console.log(res))
+    .catch((error) => this._snackBar.open(error.message, 'Cerrar'));
+  }
+
+  updateStudent() {
+    let indexOfStudent = this.studentsData.findIndex((x) => x.id === this.student.id);
+    this.studentsData[indexOfStudent] = this.student;
   }
 
   ngOnDestroy(): void {
