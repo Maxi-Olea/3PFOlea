@@ -7,8 +7,8 @@ import { User } from '../../shared/interfaces/user.interface';
 })
 export class UserService {
 
-  //isLoggedIn:boolean = false;
-  isLoggedIn:boolean = true;
+  isLoggedIn:boolean = false;
+  //isLoggedIn:boolean = true;
 
   users:User[] = [{
     id: 1,
@@ -28,8 +28,8 @@ export class UserService {
     rol: 'user'
   },];
 
-  //userData!:User | null;
-  userData:User | null = {id: 1, username: 'Admin', name: 'Maxi', lastname: 'Olea', rol: 'user'}
+  userData!:User | null;
+  //userData:User | null = {id: 1, username: 'Admin', name: 'Maxi', lastname: 'Olea', rol: 'user'} //user mockeado para pruebas
   usersData:User[] = [];
   userToEdit!:User | null;
 
