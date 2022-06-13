@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, Observer, of } from 'rxjs';
+import { Observable, Observer, of, throwError } from 'rxjs';
 import { User } from '../../shared/interfaces/user.interface';
 
 @Injectable({
@@ -52,6 +52,10 @@ export class UserService {
     return of(this.isLoggedIn)
   }
 
+  logOff() {
+    this.isLoggedIn = false;
+  }
+
   checkLogin(username:string, password:string):Observable<boolean> {
     let user = this.users.find((usr) => usr.username === username)
     if(user && user.password === password) {
@@ -90,7 +94,7 @@ export class UserService {
       }
       return of(userData)
     }else {
-      return of(this.userData!)
+      return throwError({ message: 'El usuario no existe'})
     }
   }
 

@@ -58,6 +58,9 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
       this.userService.getUserById(id).subscribe((userData) => {
         this.user = userData
         console.log(this.user)
+        }, (error) => {
+          this._snackBar.open(error.message, 'Cerrar');
+          this.router.navigate(['dashboard/users']);
         })
     )
   }

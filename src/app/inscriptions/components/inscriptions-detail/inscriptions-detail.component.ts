@@ -69,6 +69,7 @@ export class InscriptionsDetailComponent implements OnInit, OnDestroy {
     }
     else {
       this._snackBar.open('No se pudo recuperar la información del estudiante', 'Cerrar');
+      this.router.navigate(['dashboard/inscriptions']);
     }
   }
 
