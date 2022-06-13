@@ -42,7 +42,6 @@ export class StudentsListComponent implements OnInit, OnDestroy {
   getUserData() {
     this.subscriptions.add(
       this.userService.getUserData().subscribe((userData) => {
-        console.log('Datos del usuario logueado: ', userData)
         this.user = userData;
       })
     );
@@ -61,7 +60,6 @@ export class StudentsListComponent implements OnInit, OnDestroy {
       )
       .subscribe((data: Student[]) => {
         this.studentsData = data
-        console.log('Data: ', this.studentsData)
       })
     )
   }
@@ -80,8 +78,7 @@ export class StudentsListComponent implements OnInit, OnDestroy {
     this.onUpdateDeleteStudents(this.studentsData)
     this.studentService.setStudents(this.studentsData)
     .then((res) => {
-      console.log(res)
-      //this.router.navigate(['/'])
+      this._snackBar.open(res.message, 'Ok');
     })
     .catch((error) => this._snackBar.open(error.message, 'Cerrar'));
   }

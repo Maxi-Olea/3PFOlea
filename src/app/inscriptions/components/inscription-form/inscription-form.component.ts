@@ -42,7 +42,6 @@ export class InscriptionFormComponent implements OnInit, OnDestroy {
       this.studentService.getStudentToEdit().subscribe((student) => {
         if(student) {
           this.studentToEdit = student;
-          console.log(this.studentToEdit);
         } else {
           this.router.navigate(['dashboard/inscriptions'])
         }
@@ -55,7 +54,6 @@ export class InscriptionFormComponent implements OnInit, OnDestroy {
   getCourses() {
     this.subscriptions.add(
       this.courseService.getCourses().subscribe((coursesData) => {
-        console.log('cursos recibidos del servicio: ', coursesData)
         this.courses = coursesData;
       })
     );
@@ -70,7 +68,6 @@ export class InscriptionFormComponent implements OnInit, OnDestroy {
     this.subscriptions.add(
       this.studentService.getStudents().subscribe((data: Student[]) => {
         this.students = data
-        console.log('Data: ', this.students)
       })
     )
   }
@@ -81,7 +78,6 @@ export class InscriptionFormComponent implements OnInit, OnDestroy {
 
 
   onSubmit() {
-    console.log(this.inscriptionForm.value);
     let indexOfCourse = this.courses.findIndex((x) => x.id === this.inscriptionForm.get('course')?.value)
     let courseToAdd: Courses = this.courses[indexOfCourse];
     this.studentToEdit?.cursos?.push(courseToAdd);

@@ -43,6 +43,10 @@
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
     </table>
+
+    <div *ngIf="studentsData.length === 0" class="container mt-2 d-flex justify-content-center">
+      <h3 class="fw-semibold text-muted">No existen alumnos a listar</h3>
+    </div>
   
   </div>
   

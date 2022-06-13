@@ -38,7 +38,6 @@ export class CoursesListComponent implements OnInit, OnDestroy {
   getUserData() {
     this.subscriptions.add(
       this.userService.getUserData().subscribe((userData) => {
-        console.log('Datos del usuario logueado: ', userData)
         this.user = userData;
       })
     );
@@ -47,7 +46,6 @@ export class CoursesListComponent implements OnInit, OnDestroy {
   getCourses() {
     this.subscriptions.add(
       this.courseService.getCourses().subscribe((coursesData) => {
-        console.log('cursos recibidos del servicio: ', coursesData)
         this.courses = coursesData;
       })
     )
@@ -78,7 +76,7 @@ export class CoursesListComponent implements OnInit, OnDestroy {
     this.table.renderRows();
     this.onUpdateDeleteCourse(this.courses)
     this.courseService.setCourses(this.courses)
-    .then((res) => console.log(res))
+    .then((res) => this._snackBar.open(res.message, 'Ok'))
     .catch((error) => this._snackBar.open(error.message, 'Cerrar'));
   }
 

@@ -26,9 +26,7 @@ import { UserService } from "../core/services/user.service";
     isLoggedIn() {
         this.subscriptions.add(
           this.userService.getIsLoggedIn().subscribe((res) => {
-            console.log('esta logueado?: ', res)
             if(!res) {
-              console.log('nevego a la otra dirección')
               this.router.navigate(['/']);
             }
           })

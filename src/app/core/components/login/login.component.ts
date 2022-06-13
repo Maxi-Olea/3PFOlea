@@ -35,9 +35,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   isLoggedIn() {
     this.subscriptions.add(
       this.userService.getIsLoggedIn().subscribe((res) => {
-        console.log('esta logueado?: ', res)
         if(res) {
-          console.log('nevego a la otra dirección')
           this.router.navigate(['/dashboard']);
         }
       })
@@ -45,12 +43,10 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   login() {
-    console.log(this.loginForm.value);
     let username = this.loginForm.get('username')?.value
     let password = this.loginForm.get('password')?.value
     this.subscriptions.add(
       this.userService.checkLogin(username, password).subscribe((res) => {
-        console.log('Respuesta del servicio ', res)
         if(res) {
           this.router.navigate(['dashboard']);
         } else {

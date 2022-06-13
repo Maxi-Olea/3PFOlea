@@ -25,7 +25,6 @@ export class CourseService {
   setCourses(courses:Courses[]): Promise<any> {
     return new Promise((resolve, reject) => {
       if(courses.length > 0 || courses !== null) {
-        console.log('La lista de cursos actualizada es: ', courses)
         this.courses = courses;
         return resolve({ message: 'Se actualizó la información de los cursos' })
       } else {

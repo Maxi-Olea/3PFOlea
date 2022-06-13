@@ -25,7 +25,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   getUserData() {
     this.subscriptions.add(
       this.userService.getUserData().subscribe((userData) => {
-        console.log('Datos del usuario logueado: ', userData)
         this.userData = userData;
       })
     );

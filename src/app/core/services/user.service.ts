@@ -29,7 +29,7 @@ export class UserService {
   },];
 
   //userData!:User | null;
-  userData:User | null = {id: 1, username: 'Admin', name: 'Maxi', lastname: 'Olea', rol: 'admin'}
+  userData:User | null = {id: 1, username: 'Admin', name: 'Maxi', lastname: 'Olea', rol: 'user'}
   usersData:User[] = [];
   userToEdit!:User | null;
 
@@ -61,7 +61,6 @@ export class UserService {
   checkLogin(username:string, password:string):Observable<boolean> {
     let user = this.users.find((usr) => usr.username === username)
     if(user && user.password === password) {
-      console.log(user)
       this.isLoggedIn = true;
       this.userData = {
         id: user.id,
@@ -85,7 +84,6 @@ export class UserService {
   getUserById(id:number):Observable<User> {
     let user = this.users.find((usr) => usr.id === id)
     if(user) {
-      console.log(user)
       let userData = {
         id: user.id,
         username: user.username,
@@ -107,7 +105,6 @@ export class UserService {
   setUserToEdit(user:User | null):Promise<any> {
     return new Promise((resolve, reject) => {
       if(user || user === null) {
-        console.log('El user a editar es: ', user)
         this.userToEdit = user;
         return resolve(true)
       }else {
@@ -118,12 +115,10 @@ export class UserService {
 
   setUsers(user:User, isToEdit:boolean):Promise<any> {    
     return new Promise((resolve, reject) => {
-      if(this.users.length > 0) {
-        console.log('la lista de usuario recibido es: ', user)
+      if(this.users.length > 0 || this.users !== null) {
         if(isToEdit){
           let indexOfUser = this.users.findIndex((usr) => usr.id === user.id);
           this.users[indexOfUser] = user;
-          console.log('users actualizado: ', this.users)
         } else {
           this.users.push(user);
         }

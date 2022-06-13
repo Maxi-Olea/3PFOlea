@@ -38,7 +38,6 @@ export class InscriptionListComponent implements OnInit, OnDestroy {
   getUserData() {
     this.subscriptions.add(
       this.userService.getUserData().subscribe((userData) => {
-        console.log('Datos del usuario logueado: ', userData)
         this.user = userData;
       })
     );
@@ -48,7 +47,6 @@ export class InscriptionListComponent implements OnInit, OnDestroy {
     this.subscriptions.add(
       this.studentService.getStudents().subscribe((data: Student[]) => {
         this.studentsData = data
-        console.log('Data: ', this.studentsData)
       })
     )
   }

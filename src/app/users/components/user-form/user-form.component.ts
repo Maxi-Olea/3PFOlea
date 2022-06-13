@@ -47,7 +47,6 @@ export class UserFormComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.subscriptions.add(
       this.userService.getUserToEdit().subscribe((res) => {
-        console.log('La rta del servicio de UserToEdit: ', res)
         this.userToEdit = res;
         if(this.userToEdit) {
           this.userForm.get('name')?.patchValue(this.userToEdit.name)
@@ -60,23 +59,17 @@ export class UserFormComponent implements OnInit, OnDestroy {
     );
     this.subscriptions.add(
       this.userService.getUsers().subscribe((res) => {
-        console.log('users: ', res);
         this.users = res;
       })
     );
     
   }
 
-  onSubmit() {
-    //Evalua si el elemento es nuevo o a editar y luego envía al service los datos.
-    console.log('Datos del formulario: ', this.userForm.value)
+  onSubmit() { //Evalua si el elemento es nuevo o a editar y luego envía al service los datos.
     let usr:User;
     let isToEdit:boolean;
     if(this.userToEdit) { //Editamos un usuario existente
-      console.log('usuario a editar: ', this.userToEdit)
-      console.log('userToEdit.id: ', this.userToEdit.id);
       let indexOfUser = this.userToEdit.id
-      console.log('indexofUser: ', indexOfUser)
       this.userForm.value['id'] = indexOfUser;
       isToEdit = true;
     } else { //Agregamos un nuevo usuario
@@ -84,7 +77,6 @@ export class UserFormComponent implements OnInit, OnDestroy {
       isToEdit = false;
     }
     usr = this.userForm.value;
-    console.log('usuario que se va a enviar a guardar: ', usr)
     this.userService.setUsers(usr, isToEdit)
     .then((res) => {
       this._snackBar.open(res.message, 'Ok')

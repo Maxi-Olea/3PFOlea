@@ -22,7 +22,6 @@ export class StudentService {
   setStudents(students:Student[]): Promise<any> {
     return new Promise((resolve, reject) => {
       if(students.length > 0 || students !== null) {
-        console.log('la lista de estudiantes actualizada es: ', students)
         this.studentsData = students;
         return resolve({ message: 'Se actualizo la información de los estudiantes correctamente' })
       } else {
@@ -38,7 +37,6 @@ export class StudentService {
   setStudentToEdit(student: Student | null) {
     return new Promise((resolve, reject) => {
       if(student || student === null) {
-        console.log('El student a editar es: ', student)
         this.studentToEdit = student;
         return resolve(true)
       }else {

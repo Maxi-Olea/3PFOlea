@@ -37,7 +37,6 @@ export class StudentsDetailsComponent implements OnInit, OnDestroy {
   getUserData() {
     this.subscriptions.add(
       this.userService.getUserData().subscribe((userData) => {
-        console.log('Datos del usuario logueado: ', userData)
         this.user = userData;
       })
     );
@@ -47,7 +46,6 @@ export class StudentsDetailsComponent implements OnInit, OnDestroy {
     this.subscriptions.add(
       this.studentService.getStudents().subscribe((data: Student[]) => {
         this.studentsData = data
-        console.log('Data: ', this.studentsData)
       })
     )
   }
@@ -56,7 +54,6 @@ export class StudentsDetailsComponent implements OnInit, OnDestroy {
     let id:number = parseInt(this.route.snapshot.paramMap.get('id') as string);
     let studentData = this.studentsData.find((student) => student.id === id)
     if(studentData) {
-      console.log('Detalles del estudiante: ', studentData);
       this.student = studentData;
     }
     else {

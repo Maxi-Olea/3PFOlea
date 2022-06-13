@@ -37,7 +37,6 @@ export class UsersListComponent implements OnInit, OnDestroy {
   getUserData() {
     this.subscriptions.add(
       this.userService.getUserData().subscribe((userData) => {
-        console.log('Datos del usuario logueado: ', userData)
         this.usr = userData;
       })
     );
@@ -46,7 +45,6 @@ export class UsersListComponent implements OnInit, OnDestroy {
   getUsers() {
     this.subscriptions.add(
       this.userService.getUsers().subscribe((users) => {
-        console.log('Estos son los usuarios registrados: ', users)
         this.usersData = users;
       })
     )
@@ -65,15 +63,12 @@ export class UsersListComponent implements OnInit, OnDestroy {
   }
 
   onClickDetails(user:User){
-    console.log('Usuario: ', user);
     this.router.navigate([`dashboard/users/${user.id}`])
   }
 
   onClickEdit(user:User){
-    console.log('Usuario: ', user);
     this.userService.setUserToEdit(user)
-    .then((res) => {
-      console.log(res);
+    .then(() => {
       this.router.navigate(['dashboard/users/userform']);
     })
     .catch((res) => {
@@ -82,8 +77,7 @@ export class UsersListComponent implements OnInit, OnDestroy {
   }
 
   onDeleteuser(user:User){
-    console.log('Usuario: ', user);
-      /* Se busca el elemento por el id en el array de usuarios,
+    /* Se busca el elemento por el id en el array de usuarios,
     Se elimina por el index, y luego usando el ViewChild se renderiza de nuevo la tabla.
     Por ultimo, se actualiza el listado de usuarios en el servicio */
     let indexOfUser = this.usersData.findIndex((usr) => usr.id === user.id)
