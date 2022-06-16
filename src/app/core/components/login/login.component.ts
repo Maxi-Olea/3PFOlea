@@ -4,6 +4,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { UserService } from 'src/app/core/services/user.service';
+import { User } from 'src/app/shared/interfaces/user.interface';
 
 @Component({
   selector: 'app-login',
@@ -45,19 +46,20 @@ export class LoginComponent implements OnInit, OnDestroy {
   login() {
     let username = this.loginForm.get('username')?.value
     let password = this.loginForm.get('password')?.value
+    let users:User[]= [];
     this.subscriptions.add(
-      this.userService.checkLogin(username, password).subscribe((res) => {
-        if(res) {
+      this.userService.getUsers().subscribe((usersdata) => {
+        users = usersdata;
+        let user = users.find((usr) => usr.username === username)
+        if(user && user.password === password) {
+          this.userService.setIsLoggedIn(true, user);
           this.router.navigate(['dashboard']);
         } else {
-          this.openToast('El usuario y/o la contraseña ingresadas son incorrectas')
+          this.userService.setIsLoggedIn(false, null);
+          this._snackBar.open('El usuario y/o la contraseña ingresadas son incorrectas', 'Cerrar')
         }
       })
     );
-  }
-
-  openToast(message:string) {
-    this._snackBar.open(message, 'Cerrar')
   }
 
   ngOnDestroy(): void {

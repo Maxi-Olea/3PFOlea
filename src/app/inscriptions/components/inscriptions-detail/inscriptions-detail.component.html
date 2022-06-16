@@ -3,13 +3,16 @@
         <button [routerLink]="'..'" class="m-2" mat-fab color="primary" aria-label="back button" matTooltip="Volver a usuarios">
                     <mat-icon>arrow_back_ios_new</mat-icon>
                 </button>
-        <h1 appTitles>Inscripciones de {{ student.name }} {{ student.lastname }} </h1>
-    </div>
-    <button [ngClass]="user!.rol === 'admin' ? '' : 'd-none'" (click)="onClickAdd()" class="m-2" mat-fab color="primary" aria-label="edit button" matTooltip="Inscribirse a cursado">
-        <mat-icon>history_edu</mat-icon>
-    </button>
+        <h1 appTitles>Inscripciones</h1>
+      </div>
+      <div *ngIf="!loading" class="d-flex justify-content-between align-items-end">
+        <h1>{{ student.name }} {{ student.lastname }}</h1>
+        <button [ngClass]="user!.rol === 'admin' ? '' : 'd-none'" (click)="onClickAdd()" class="m-2" mat-fab color="primary" aria-label="edit button" matTooltip="Inscribirse a cursado">
+            <mat-icon>history_edu</mat-icon>
+        </button>
+      </div>
 
-    <table #table mat-table [dataSource]="student.cursos!" class="mat-elevation-z8 px-0 w-100" aria-describedby="Cursos">
+    <table #table mat-table [dataSource]="dataSource" class="mat-elevation-z8 px-0 w-100" aria-describedby="Cursos">
         <!-- Id Column -->
         <ng-container matColumnDef="id">
           <th mat-header-cell *matHeaderCellDef> ID </th>
@@ -41,6 +44,10 @@
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
       </table>
+      <mat-paginator [pageSizeOptions]="[8, 10, 20]"
+                 showFirstLastButtons 
+                 aria-label="Select students of students list">
+      </mat-paginator>
     
 </div>
 

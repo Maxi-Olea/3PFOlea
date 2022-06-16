@@ -1,4 +1,5 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { MatPaginator } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
@@ -11,17 +12,18 @@ import { User } from 'src/app/shared/interfaces/user.interface';
   templateUrl: './users-list.component.html',
   styleUrls: ['./users-list.component.scss']
 })
-export class UsersListComponent implements OnInit, OnDestroy {
+export class UsersListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   subscriptions:Subscription = new Subscription();
 
-  @ViewChild('table') table!: MatTable<any>;
+  @ViewChild(MatTable, { static: false }) table!: MatTable<any>;
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   usersData!:User[]; //array de todos los usuarios registrados en la app
   usr!:User | null; //datos del usuario que esta logueado en este momento
 
   displayedColumns = ['id', 'name', 'username', 'actions'];
-  dataSource = new MatTableDataSource(this.usersData);
+  dataSource = new MatTableDataSource();
   
   constructor(
     private userService: UserService,
@@ -32,6 +34,10 @@ export class UsersListComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.getUserData();
     this.getUsers();
+  }
+
+  ngAfterViewInit(): void {
+    this.dataSource.paginator = this.paginator;
   }
 
   getUserData() {
@@ -46,6 +52,7 @@ export class UsersListComponent implements OnInit, OnDestroy {
     this.subscriptions.add(
       this.userService.getUsers().subscribe((users) => {
         this.usersData = users;
+        this.dataSource.data = this.usersData;
       })
     )
   }
@@ -76,30 +83,21 @@ export class UsersListComponent implements OnInit, OnDestroy {
     })
   }
 
-  onDeleteuser(user:User){
+  onDeleteuser(user: User){
     /* Se busca el elemento por el id en el array de usuarios,
     Se elimina por el index, y luego usando el ViewChild se renderiza de nuevo la tabla.
-    Por ultimo, se actualiza el listado de usuarios en el servicio */
+    Por ultimo, se actualiza el listado de usuarios a traves del servicio */
     let indexOfUser = this.usersData.findIndex((usr) => usr.id === user.id)
     this.usersData.splice(indexOfUser, 1)
+    this.dataSource.data = this.usersData;
     this.table.renderRows();
-    this.onUpdateDelete(this.usersData)
-    this.userService.deleteUser(this.usersData)
-    .then((res) => {
-      this._snackBar.open(res.message, 'OK')
-    })
-    .catch((error) => {
-      this._snackBar.open(error.message, 'Cerrar')
-    })
-  }
-
-  onUpdateDelete(element:any) {
-    /* Una vez editado por el delete, 
-    se modifican los ids (para evitar errores en delete) y ademas hace un update del valor de data */
-    element.forEach((el:any,index:number)=>{
-      el['id']=index+1
-    })
-    this.usersData=element;
+    this.subscriptions.add(
+      this.userService.deleteUser(user.id!).subscribe((userdeleted) => {
+        this._snackBar.open(`El usuario ${userdeleted.username} fue eliminado`, 'Ok');
+      }, () => {
+        this._snackBar.open('Ocurrió un error y no se puedo eliminar el usuario', 'Cerrar');
+      })
+    );
   }
 
   ngOnDestroy(): void {

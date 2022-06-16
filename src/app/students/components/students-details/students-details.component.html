@@ -5,7 +5,7 @@
                 </button>
         <h1 appTitles>Detalles del Alumno</h1>
     </div>
-    <mat-card>
+    <mat-card *ngIf="!loading">
         <mat-card-content>
             <mat-card>
                 <mat-card-header>

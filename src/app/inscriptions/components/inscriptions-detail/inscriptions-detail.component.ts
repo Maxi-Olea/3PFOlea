@@ -1,6 +1,7 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { MatPaginator } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatTable } from '@angular/material/table';
+import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { StudentService } from 'src/app/core/services/student.service';
@@ -14,19 +15,21 @@ import { User } from 'src/app/shared/interfaces/user.interface';
   templateUrl: './inscriptions-detail.component.html',
   styleUrls: ['./inscriptions-detail.component.scss']
 })
-export class InscriptionsDetailComponent implements OnInit, OnDestroy {
+export class InscriptionsDetailComponent implements OnInit, AfterViewInit, OnDestroy {
 
   subscriptions: Subscription = new Subscription();
 
   user!:User | null; //Datos del usuario logueado
+  loading: boolean = false;
 
-  @ViewChild('table') table!: MatTable<any>;
+  @ViewChild(MatTable, { static: false }) table!: MatTable<any>;
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   student!: Student; //Estudiante a mostrar detalles
   studentsData!: Student[]; //Listado de estudiantes
 
   displayedColumns = ['id', 'name', 'actions'];
-  //dataSource = new MatTableDataSource(this.student.cursos!);
+  dataSource = new MatTableDataSource();
 
   constructor(
     private route: ActivatedRoute,
@@ -37,9 +40,13 @@ export class InscriptionsDetailComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
+    this.loading = true;
     this.getUserData();
-    this.getStudents();
     this.getStudentDetails();
+  }
+
+  ngAfterViewInit(): void {
+    this.dataSource.paginator = this.paginator;
   }
 
   getUserData() {
@@ -50,24 +57,19 @@ export class InscriptionsDetailComponent implements OnInit, OnDestroy {
     );
   }
 
-  getStudents() {
-    this.subscriptions.add(
-      this.studentService.getStudents().subscribe((data: Student[]) => {
-        this.studentsData = data
-      })
-    )
-  }
 
   getStudentDetails() {
     let id:number = parseInt(this.route.snapshot.paramMap.get('id') as string);
-    let studentData = this.studentsData.find((student) => student.id === id)
-    if(studentData) {
-      this.student = studentData;
-    }
-    else {
-      this._snackBar.open('No se pudo recuperar la información del estudiante', 'Cerrar');
-      this.router.navigate(['dashboard/inscriptions']);
-    }
+    this.subscriptions.add(
+      this.studentService.getStudentById(id).subscribe((res) => {
+        this.student = res;
+        this.dataSource.data = this.student.cursos!
+        this.loading = false;
+      }, () => {
+        this._snackBar.open('Ocurrió un error recuperando la información del alumno', 'Cerrar');
+        this.router.navigate(['dashboard/students']);
+      })
+    );
   }
 
   onClickAdd() {
@@ -87,12 +89,14 @@ export class InscriptionsDetailComponent implements OnInit, OnDestroy {
     let courses: Courses[] = this.student.cursos!;
     let index = courses.findIndex((x) => x.id === course.id);
     courses.splice(index,1);
+    this.dataSource.data = courses;
     this.table.renderRows();
     this.student.cursos = courses;
-    this.updateStudent();
-    this.studentService.setStudents(this.studentsData)
-    .then((res) => this._snackBar.open(res.message, 'Ok'))
-    .catch((error) => this._snackBar.open(error.message, 'Cerrar'));
+    this.studentService.editStudentById(this.student.id, this.student).subscribe((res) => {
+      this._snackBar.open(`Se actualizó la información de los cursos de ${res.name} ${res.lastname}`, 'Ok');
+    }, () => {
+      this._snackBar.open('Ocurrió un error al intentar actualizar la información de los cursos del alumno', 'Cerrar');
+    })
   }
 
   updateStudent() {

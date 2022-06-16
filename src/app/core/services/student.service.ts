@@ -1,3 +1,4 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { Student } from 'src/app/shared/interfaces/student.interface';
@@ -7,27 +8,33 @@ import { Student } from 'src/app/shared/interfaces/student.interface';
 })
 export class StudentService {
 
-  studentsData: Student[] = [ //Datos de los estudiantes
-    {id: 1, name: 'Juan', lastname: 'Lopez', email: 'jlopez@mail.com', birthday: new Date('1998, 11, 25'), cursos: [{id: 1, course: 'Angular' }, {id:2, course: 'React'}]},
-    {id: 2, name: 'Pedro', lastname: 'Perez', email: 'pperez@mail.com', birthday: new Date('1990, 11, 25'), cursos: [{id: 1, course: 'Angular' }, {id:4, course: 'Node-JS'}]}
-  ];
+  apiUrl = 'https://62aa1e323b314385544268cd.mockapi.io/students/';
 
   studentToEdit!: Student | null;
 
-  
+  constructor(
+    private http: HttpClient
+  ) {}
+
   getStudents():Observable<Student[]> {
-    return of(this.studentsData);
+    return this.http.get<Student[]>(this.apiUrl);
   }
 
-  setStudents(students:Student[]): Promise<any> {
-    return new Promise((resolve, reject) => {
-      if(students.length > 0 || students !== null) {
-        this.studentsData = students;
-        return resolve({ message: 'Se actualizo la información de los estudiantes correctamente' })
-      } else {
-        reject({ message: 'No se pudo actualizar la informacion de los estudiantes' })
-      }
-    });
+  getStudentById(id: number): Observable<Student> {
+    return this.http.get<Student>(this.apiUrl + id);
+  }
+
+  deleteStudentById(id: number): Observable<Student> {
+    return this.http.delete<Student>(this.apiUrl + id);
+  }
+
+  editStudentById(id:number, student: Student): Observable<Student> {
+    console.log('El id recibido es: ', id)
+    return this.http.put<Student>(this.apiUrl + id, student);
+  }
+
+  addStudent(student: Student): Observable<Student> {
+    return this.http.post<Student>(this.apiUrl, student);
   }
 
   getStudentToEdit():Observable<Student | null> {
@@ -46,6 +53,5 @@ export class StudentService {
     });
   }
 
-  
 }
 

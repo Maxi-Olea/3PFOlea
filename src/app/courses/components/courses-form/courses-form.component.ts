@@ -17,8 +17,7 @@ export class CoursesFormComponent implements OnInit, OnDestroy {
 
   courseForm: FormGroup;
   courseToEdit!: Courses | null;
-  //courses!: Courses[];
-
+  
   constructor(
     private fb: FormBuilder,
     private courseService: CourseService,
@@ -48,33 +47,28 @@ export class CoursesFormComponent implements OnInit, OnDestroy {
   onSubmit() {
     /*Evalua si el elemento es nuevo o a editar, si es nuevo agrega el curso al listado de cursos.
     Si es a editar edita el curso segun el id. finalmente actualiza los cursos en el servicio*/
-    let courses: Courses[] = [];
-    this.subscriptions.add(
-      this.courseService.getCourses().subscribe((coursesData) => {
-        courses = coursesData
-      })
-    );
-    let index = 1;
-    if(courses.length > 0 && !this.courseToEdit) {
-      index = courses.length + 1;
-      this.courseForm.value['id'] = index;
-      courses.push(this.courseForm.value);
-    } else if(courses.length === 0) {
-      this.courseForm.value['id'] = index;
-      courses.push(this.courseForm.value);
-    }
-
-    if(this.courseToEdit) {
-      let indexOfCourse = courses.findIndex((course) => course.id === this.courseToEdit!.id);
+    if(this.courseToEdit) { //Si se edita un curso existente
       this.courseForm.value['id'] = this.courseToEdit.id;
-      courses[indexOfCourse] = this.courseForm.value;
+      let id:number = this.courseToEdit.id;
+      let course:Courses = this.courseForm.value;
+      this.subscriptions.add(
+        this.courseService.editCourseById(id, course).subscribe((res) => {
+          this._snackBar.open(`Se actualizó la información del curso ${res.course}`, 'Ok');
+          this.router.navigate(['dashboard/courses']);
+        }, () => {
+          this._snackBar.open('Ocurrió un error y no se pudo actualizar la información de los cursos');
+        })
+      );
+    } else { //Si se agrega un curso nuevo
+      this.subscriptions.add(
+        this.courseService.addCourse(this.courseForm.value).subscribe((res) => {
+          this._snackBar.open(`Se agregó el curso ${res.course} exitosamente`, 'Ok');
+          this.router.navigate(['dashboard/courses']);
+        }, () => {
+          this._snackBar.open('Ocurrió un error y no se pudo agregar el curso', 'Cerrar');
+        })
+      );
     }
-    this.courseService.setCourses(courses)
-    .then((res) => {
-      this._snackBar.open(res.message, 'Ok');
-      this.router.navigate(['dashboard/courses']);
-    })
-    .catch((error) => this._snackBar.open(error.message, 'Cerrar'));
   }
 
   ngOnDestroy(): void {

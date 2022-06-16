@@ -66,25 +66,28 @@ export class UserFormComponent implements OnInit, OnDestroy {
   }
 
   onSubmit() { //Evalua si el elemento es nuevo o a editar y luego envía al service los datos.
-    let usr:User;
-    let isToEdit:boolean;
-    if(this.userToEdit) { //Editamos un usuario existente
-      let indexOfUser = this.userToEdit.id
-      this.userForm.value['id'] = indexOfUser;
-      isToEdit = true;
-    } else { //Agregamos un nuevo usuario
-      this.userForm.value['id'] = this.users.length + 1;
-      isToEdit = false;
+    if(this.userToEdit) { //si estamos editando un usuario existente
+      this.userForm.value['id'] = this.userToEdit.id;
+      let id:number = this.userToEdit.id!;
+      let user: User = this.userForm.value
+      this.subscriptions.add(
+        this.userService.editUser(id, user).subscribe((res) => {
+          this._snackBar.open(`Se actualizó la información de ${res.username}`);
+          this.router.navigate(['dashboard/users']);
+        }, () => {
+          this._snackBar.open('Ocurrió un error al editar la información del usuario');
+        })
+      );
+    } else { // si estamos agregando un usuario nuevo
+      this.subscriptions.add(
+        this.userService.addUser(this.userForm.value).subscribe((res) => {
+          this._snackBar.open(`El usuario ${res.username} se agregó correctamente`, 'Ok');
+          this.router.navigate(['dashboard/users']);
+        }, () => {
+          this._snackBar.open('Ocurrió un error al intentar agregar el usuario', 'Cerrar');
+        })
+      );
     }
-    usr = this.userForm.value;
-    this.userService.setUsers(usr, isToEdit)
-    .then((res) => {
-      this._snackBar.open(res.message, 'Ok')
-      this.router.navigate(['dashboard/users'])
-    })
-    .catch((res) => {
-      this._snackBar.open(res.message, 'Cerrar')
-    })
   }
 
   checkPassword(group: FormGroup): any {

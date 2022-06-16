@@ -1,3 +1,4 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { Courses } from 'src/app/shared/interfaces/course.interface';
@@ -7,30 +8,28 @@ import { Courses } from 'src/app/shared/interfaces/course.interface';
 })
 export class CourseService {
 
-  courses: Courses[] = [
-    {id: 1, course: 'Angular', professor: 'Juan Perez', email:'jperez@mail.com'},
-    {id:2, course: 'React', professor: 'José Garcia', email:'jgarcia@mail.com'},
-    {id:3, course: 'VueJS', professor: 'Luis Suarez', email:'lsuarez@mail.com'},
-    {id:4, course: 'Node-JS', professor: 'Marcos Juarez', email:'mjuarez@mail.com'},
-    {id:5, course: 'Python', professor: 'Pedro Ramires', email:'pramires@mail.com'},
-    {id:6, course: 'Java', professor: 'Juan Perez', email:'jperez@mail.com'},
-  ];
-
   courseToEdit!: Courses | null;
 
+  apiUrl = 'https://62aa1e323b314385544268cd.mockapi.io/courses/';
+
+  constructor(
+    private http: HttpClient
+  ) {}
+
   getCourses():Observable<Courses[]> {
-    return of(this.courses);
+    return this.http.get<Courses[]>(this.apiUrl);
   }
 
-  setCourses(courses:Courses[]): Promise<any> {
-    return new Promise((resolve, reject) => {
-      if(courses.length > 0 || courses !== null) {
-        this.courses = courses;
-        return resolve({ message: 'Se actualizó la información de los cursos' })
-      } else {
-        reject({ message: 'No se pudo actualizar la información de los cursos' })
-      }
-    });
+  deleteCourseById(id:number):Observable<Courses> {
+    return this.http.delete<Courses>(this.apiUrl + id);
+  }
+
+  editCourseById(id:number, course: Courses):Observable<Courses> {
+    return this.http.put<Courses>(this.apiUrl + id , course);
+  }
+
+  addCourse(course: Courses):Observable<Courses> {
+    return this.http.post<Courses>(this.apiUrl, course);
   }
 
   getCourseToEdit():Observable<Courses | null> {

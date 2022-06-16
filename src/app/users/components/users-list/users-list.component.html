@@ -7,7 +7,7 @@
       <mat-icon>add</mat-icon>
     </button>
     
-    <table #table mat-table [dataSource]="usersData" class="mat-elevation-z8 px-0 w-100" aria-describedby="Tabla de Usuarios">
+    <table #table mat-table [dataSource]="dataSource" class="mat-elevation-z8 px-0 w-100" aria-describedby="Tabla de Usuarios">
     
       <!-- Id Column -->
       <ng-container matColumnDef="id">
@@ -43,6 +43,10 @@
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
     </table>
+    <mat-paginator [pageSizeOptions]="[8, 12, 20]"
+                 showFirstLastButtons 
+                 aria-label="Select students of students list">
+    </mat-paginator>
   
     <div *ngIf="usersData.length === 0" class="container mt-2 d-flex justify-content-center">
       <h3 class="fw-semibold text-muted">No existen usuarios para listar</h3>

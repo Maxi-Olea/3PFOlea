@@ -1,6 +1,7 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { MatPaginator } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { StudentService } from 'src/app/core/services/student.service';
@@ -13,15 +14,19 @@ import { User } from 'src/app/shared/interfaces/user.interface';
   templateUrl: './inscription-list.component.html',
   styleUrls: ['./inscription-list.component.scss']
 })
-export class InscriptionListComponent implements OnInit, OnDestroy {
+export class InscriptionListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   subscriptions: Subscription = new Subscription();
+  loading: boolean = false;
+
+  @ViewChild(MatTable, { static: false }) table!: MatTable<any>;
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   user!: User | null;
   studentsData!: Student[];
 
   displayedColumns = ['id', 'name', 'actions'];
-  dataSource = new MatTableDataSource(this.studentsData);
+  dataSource = new MatTableDataSource();
 
   constructor(
     private userService: UserService,
@@ -31,8 +36,13 @@ export class InscriptionListComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
+    this.loading = true;
     this.getUserData();
     this.getStudents();
+  }
+
+  ngAfterViewInit(): void {
+    this.dataSource.paginator = this.paginator;
   }
 
   getUserData() {
@@ -47,6 +57,8 @@ export class InscriptionListComponent implements OnInit, OnDestroy {
     this.subscriptions.add(
       this.studentService.getStudents().subscribe((data: Student[]) => {
         this.studentsData = data
+        this.dataSource.data = this.studentsData;
+        this.loading = false;
       })
     )
   }

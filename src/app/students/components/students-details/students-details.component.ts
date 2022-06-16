@@ -16,9 +16,9 @@ export class StudentsDetailsComponent implements OnInit, OnDestroy {
 
   subscriptions: Subscription = new Subscription();
   user!:User | null; //Datos del usuario logueado
+  loading: boolean = false;
 
   student!: Student; //Estudiante a mostrar detalles
-  studentsData!: Student[]; //Listado de estudiantes
 
   constructor(
     private route: ActivatedRoute,
@@ -29,8 +29,8 @@ export class StudentsDetailsComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
+    this.loading = true
     this.getUserData();
-    this.getStudents();
     this.getStudentDetails();
   }
 
@@ -42,24 +42,18 @@ export class StudentsDetailsComponent implements OnInit, OnDestroy {
     );
   }
 
-  getStudents() {
-    this.subscriptions.add(
-      this.studentService.getStudents().subscribe((data: Student[]) => {
-        this.studentsData = data
-      })
-    )
-  }
-
   getStudentDetails() {
     let id:number = parseInt(this.route.snapshot.paramMap.get('id') as string);
-    let studentData = this.studentsData.find((student) => student.id === id)
-    if(studentData) {
-      this.student = studentData;
-    }
-    else {
-      this._snackBar.open('No se pudo recuperar la información del estudiante', 'Cerrar');
-      this.router.navigate(['dashboard/students']);
-    }
+    this.subscriptions.add(
+      this.studentService.getStudentById(id).subscribe((res) => {
+        console.log('respuesta del getById: ', res);
+        this.student = res;
+        this.loading = false;
+      }, () => {
+        this._snackBar.open('Ocurrió un error recuperando la información del alumno', 'Cerrar');
+        this.router.navigate(['dashboard/students']);
+      })
+    );
   }
 
   onClickEdit() {
@@ -71,21 +65,14 @@ export class StudentsDetailsComponent implements OnInit, OnDestroy {
   }
 
   onDeleteStudent() {
-    let indexOfStudent = this.studentsData.findIndex((x) => x.id === this.student.id)
-    this.studentsData.splice(indexOfStudent, 1)
-    this.onUpdateDelete(this.studentsData)
-    this.studentService.setStudents(this.studentsData)
-    .then(() => this.router.navigate(['students']))
-    .catch((error) => this._snackBar.open(error.message, 'Cerrar'));
-  }
-
-  onUpdateDelete(element:any) {
-    /* Una vez editado por el delete, 
-    se modifican los ids (para evitar errores en delete) y ademas hace un update del valor de data */
-    element.forEach((el:any,index:number)=>{
-      el['id']=index+1
-    })
-    this.studentsData=element;
+    this.subscriptions.add(
+      this.studentService.deleteStudentById(this.student.id).subscribe((res) => {
+        this._snackBar.open(`${res.name} ${res.lastname} fue eliminado con exito del listado de alumnos`, 'Ok');
+        this.router.navigate(['dashboard/students']);
+      }, () => {
+        this._snackBar.open('Ocurrió un error y no se pudo eliminar al alumno', 'Cerrar');
+      })
+    );   
   }
 
   onClickInscription() {

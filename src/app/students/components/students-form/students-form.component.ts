@@ -40,6 +40,7 @@ export class StudentsFormComponent implements OnInit, OnDestroy {
       })
     );
     if(this.studentToEdit) {
+      console.log('estudiante a editar: ', this.studentToEdit)
       this.studentForm.get('name')?.patchValue(this.studentToEdit.name)
       this.studentForm.get('lastname')?.patchValue(this.studentToEdit.lastname)
       this.studentForm.get('email')?.patchValue(this.studentToEdit.email)
@@ -48,36 +49,29 @@ export class StudentsFormComponent implements OnInit, OnDestroy {
   }
 
   onSubmit() {
-    let students:Student[]=[];
-    this.subscriptions.add(
-      this.studentService.getStudents().subscribe((studentsData) => {
-        students = studentsData
-      })
-    );
-    let index = 1;
-    if(students.length>0 && !this.studentToEdit) { // si agregamos un alumno nuevo
-      index = students.length + 1;
-      this.studentForm.value['id'] = index;
-      this.studentForm.value['cursos'] = [];
-      students.push(this.studentForm.value);
-    } else if(students.length === 0) { // si es el primer alumno
-      this.studentForm.value['id'] = index;
-      this.studentForm.value['cursos'] = [];
-      students.push(this.studentForm.value);
-    }
-
     if(this.studentToEdit) { // si estamos editando un alumno existente
-      let indexOfStudent = students.findIndex((student) => student.id === this.studentToEdit!.id);
       this.studentForm.value['id'] = this.studentToEdit.id;
       this.studentForm.value['cursos'] = this.studentToEdit.cursos;
-      students[indexOfStudent] = this.studentForm.value;
+      let id: number = this.studentToEdit.id;
+      let student: Student = this.studentForm.value;
+      this.subscriptions.add(
+        this.studentService.editStudentById(id, student).subscribe((res) => {
+          this._snackBar.open(`Se actualizó la información de ${res.name} ${res.lastname}`, 'OK');
+          this.router.navigate(['dashboard/students']);
+        }, () => {
+          this._snackBar.open('Ocurrio un error y no se pudo actualizar la información del usuario', 'Cerrar');
+        })
+      );
+    } else { // si estamos agregando un usuario nuevo
+      this.subscriptions.add(
+        this.studentService.addStudent(this.studentForm.value).subscribe((res) => {
+          this._snackBar.open(`Se agregó ${res.name} ${res.lastname} a los alumnos`, 'Ok');
+          this.router.navigate(['dashboard/students']);
+        }, () => {
+          this._snackBar.open('Ocurrió un error y no se pudo agregar el alumno', 'Cerrar');
+        })
+      );
     }
-    this.studentService.setStudents(students)
-    .then((res) => {
-      this._snackBar.open(res.message, 'Ok');
-      this.router.navigate(['dashboard/students']);
-    })
-    .catch((error) => this._snackBar.open(error.message, 'Cerrar'));
   }
 
   ngOnDestroy(): void {

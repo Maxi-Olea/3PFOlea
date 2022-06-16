@@ -17,7 +17,6 @@ export class InscriptionFormComponent implements OnInit, OnDestroy {
 
   subscriptions: Subscription = new Subscription();
   
-  students!: Student[];
   studentToEdit!:Student | null; //datos del estudiante al que vamos a inscribir a un curso
   courses!: Courses[]; //listado de todos los cursos disponibles
   coursesList!: Courses[]; //listado los cursos disponibles para inscribirse que tiene disponible el alumno
@@ -48,7 +47,6 @@ export class InscriptionFormComponent implements OnInit, OnDestroy {
       })
     );
     this.getCourses();
-    this.getStudents();
   }
 
   getCourses() {
@@ -64,14 +62,6 @@ export class InscriptionFormComponent implements OnInit, OnDestroy {
     // console.log('lista actualizada: ', coursesAux)
   }
 
-  getStudents() {
-    this.subscriptions.add(
-      this.studentService.getStudents().subscribe((data: Student[]) => {
-        this.students = data
-      })
-    )
-  }
-
   goBack() {
     this.router.navigate([`dashboard/inscriptions/${this.studentToEdit!.id}`])
   }
@@ -81,14 +71,13 @@ export class InscriptionFormComponent implements OnInit, OnDestroy {
     let indexOfCourse = this.courses.findIndex((x) => x.id === this.inscriptionForm.get('course')?.value)
     let courseToAdd: Courses = this.courses[indexOfCourse];
     this.studentToEdit?.cursos?.push(courseToAdd);
-    let indexOfStudent = this.students.findIndex((x) => x.id == this.studentToEdit!.id)
-    this.students[indexOfStudent] = this.studentToEdit!;
-    this.studentService.setStudents(this.students)
-    .then((res) => {
-      this._snackBar.open(res.message, 'Ok')
+    this.studentService.editStudentById(this.studentToEdit?.id!, this.studentToEdit!).subscribe((res) => {
+      console.log('respuesta de agregar un curso: ', res);
+      this._snackBar.open(`Se actualizaron los cursos de ${res.name} ${res.lastname}`, 'Ok');
       this.goBack();
+    }, () => {
+      this._snackBar.open('Ocurrió un error al actualizar la información de los cursos', 'Cerrar');
     })
-    .catch((error) => this._snackBar.open(error.message, 'Cerrar'))
   }
 
   ngOnDestroy(): void {

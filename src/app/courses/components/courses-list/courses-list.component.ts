@@ -1,4 +1,5 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { MatPaginator } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
@@ -13,15 +14,18 @@ import { User } from 'src/app/shared/interfaces/user.interface';
   templateUrl: './courses-list.component.html',
   styleUrls: ['./courses-list.component.scss']
 })
-export class CoursesListComponent implements OnInit, OnDestroy {
+export class CoursesListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   subscriptions: Subscription = new Subscription();
   user!: User | null;
+  loading: boolean = false;
 
   courses!: Courses[];
-  @ViewChild('table') table!: MatTable<any>;
+  @ViewChild(MatTable) table!: MatTable<any>;
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+
   displayedColumns = ['id', 'name', 'professor', 'email', 'actions'];
-  dataSource = new MatTableDataSource(this.courses);
+  dataSource = new MatTableDataSource();
 
   constructor(
     private userService: UserService,
@@ -31,8 +35,13 @@ export class CoursesListComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
+    this.loading = true;
     this.getUserData();
     this.getCourses();
+  }
+
+  ngAfterViewInit(): void {
+    this.dataSource.paginator = this.paginator;
   }
 
   getUserData() {
@@ -47,6 +56,8 @@ export class CoursesListComponent implements OnInit, OnDestroy {
     this.subscriptions.add(
       this.courseService.getCourses().subscribe((coursesData) => {
         this.courses = coursesData;
+        this.dataSource.data = this.courses;
+        this.loading = false;
       })
     )
   }
@@ -73,20 +84,16 @@ export class CoursesListComponent implements OnInit, OnDestroy {
     Por ultimo, actualizamos los cursos en el servicio */
     let index=this.courses.findIndex(x=> x.id===course.id);
     this.courses.splice(index,1);
+    this.dataSource.data = this.courses
     this.table.renderRows();
-    this.onUpdateDeleteCourse(this.courses)
-    this.courseService.setCourses(this.courses)
-    .then((res) => this._snackBar.open(res.message, 'Ok'))
-    .catch((error) => this._snackBar.open(error.message, 'Cerrar'));
-  }
-
-  onUpdateDeleteCourse(element:any) {
-    /* Una vez editado por el delete, 
-    se modifican los ids (para evitar errores en delete) y ademas hace un update del valor de data */
-    element.forEach((el:any,index:number)=>{
-      el['id']=index+1
-    })
-    this.courses=element;
+    //this.onUpdateDeleteCourse(this.courses)
+    this.subscriptions.add(
+      this.courseService.deleteCourseById(course.id).subscribe((res) => {
+        this._snackBar.open(`El curso de ${res.course} fue eliminado con exito`, 'Ok');
+      }, () => {
+        this._snackBar.open('Ocurrió un error al intentar eliminar el curso', 'Cerrar');
+      })
+    );
   }
 
   ngOnDestroy(): void {

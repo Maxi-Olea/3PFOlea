@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
@@ -8,24 +8,28 @@ import { Student } from 'src/app/shared/interfaces/student.interface';
 import { User } from 'src/app/shared/interfaces/user.interface';
 import { map } from 'rxjs/operators'
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatPaginator } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-students-list',
   templateUrl: './students-list.component.html',
   styleUrls: ['./students-list.component.scss']
 })
-export class StudentsListComponent implements OnInit, OnDestroy {
+export class StudentsListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   subscriptions: Subscription = new Subscription();
+  loading:boolean = false;
 
-  @ViewChild('table') table!: MatTable<any>;
+  @ViewChild(MatTable, { static: false }) table!: MatTable<any>;
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   user!:User | null;
 
   studentsData!:Student[];
 
+
   displayedColumns = ['id', 'name', 'email', 'actions'];
-  dataSource = new MatTableDataSource(this.studentsData);
+  dataSource = new MatTableDataSource<Student>();
 
   constructor(
     private userService: UserService,
@@ -35,8 +39,13 @@ export class StudentsListComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
+    this.loading = true;
     this.getUserData();
     this.getStudents();
+  }
+
+  ngAfterViewInit(): void {
+    this.dataSource.paginator = this.paginator;
   }
 
   getUserData() {
@@ -60,6 +69,8 @@ export class StudentsListComponent implements OnInit, OnDestroy {
       )
       .subscribe((data: Student[]) => {
         this.studentsData = data
+        this.dataSource.data = this.studentsData;
+        this.loading = false
       })
     )
   }
@@ -68,19 +79,22 @@ export class StudentsListComponent implements OnInit, OnDestroy {
     this.router.navigate([`dashboard/students/${student.id}`])
   }
 
-  onDeleteStudent(el:any) {
+  onDeleteStudent(id:number) {
     /* Se busca el elemento por el id en el array de estudiantes,
     Se elimina por el index, y luego usando el ViewChild, se renderiza de nuevo la tabla.
     Por ultimo, se actualiza el listado de estudiantes en el servicio */
-    let index = this.studentsData.findIndex((student) => student.id === el.id);
+    let index = this.studentsData.findIndex((student) => student.id === id);
     this.studentsData.splice(index,1);
-    this.table.renderRows()
-    this.onUpdateDeleteStudents(this.studentsData)
-    this.studentService.setStudents(this.studentsData)
-    .then((res) => {
-      this._snackBar.open(res.message, 'Ok');
-    })
-    .catch((error) => this._snackBar.open(error.message, 'Cerrar'));
+    this.dataSource.data = this.studentsData;
+    this.table.renderRows();
+    this.subscriptions.add(
+      this.studentService.deleteStudentById(id).subscribe((res) => {
+        console.log('respuesta del delete: ', res)
+        this._snackBar.open(`${res.name} ${res.lastname} fue eliminado con exito del listado de alumnos`, 'Ok')
+      }, () => {
+        this._snackBar.open('Se ha producido un error al eliminar el alumno')
+      })
+    );
   }
 
   onClickAdd() {
@@ -98,15 +112,6 @@ export class StudentsListComponent implements OnInit, OnDestroy {
     .catch((error) => {
       this._snackBar.open(error.message, 'Cerrar');
     });
-  }
-
-  onUpdateDeleteStudents(element:any) {
-    /* Una vez editado por el delete, 
-    se modifican los ids (para evitar errores en delete) y ademas hace un update del valor de data */
-    element.forEach((el:any,index:number)=>{
-      el['id']=index+1
-    })
-    this.studentsData=element;
   }
 
   ngOnDestroy(): void {

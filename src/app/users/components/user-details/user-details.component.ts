@@ -75,17 +75,14 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
     /* Se busca el elemento por el id en el array de usuarios,
     Se elimina por el index, y luego usando el ViewChild se renderiza de nuevo la tabla.
     Por ultimo, se actualiza el listado de usuarios en el servicio */
-    let indexOfUser = this.usersData.findIndex((usr) => usr.id === this.user.id)
-    this.usersData.splice(indexOfUser, 1)
-    this.onUpdateDelete(this.usersData)
-    this.userService.deleteUser(this.usersData)
-    .then((res) => {
-      this._snackBar.open(res.message, 'OK')
-      this.router.navigate(['dashboard/users']);
-    })
-    .catch((error) => {
-      this._snackBar.open(error.message, 'Cerrar')
-    })
+    this.subscriptions.add(
+      this.userService.deleteUser(this.user.id!).subscribe((res) => {
+        this._snackBar.open(`el usuario ${res.username} fue eliminado con exito`, 'Ok');
+        this.router.navigate(['dashboard/users'])
+      }, () => {
+        this._snackBar.open('Ocurrio un error al eliminar el usuario', 'Cerrar');
+      })
+    );
   }
 
   onUpdateDelete(element:any) {

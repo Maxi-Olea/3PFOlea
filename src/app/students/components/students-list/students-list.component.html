@@ -1,14 +1,13 @@
-<div class="container py-3">
-
-    <div class="d-flex align-items-end">
-      <h1 appTitles>Listado de estudiantes</h1>
-    </div>
-    <button [ngClass]="user!.rol === 'admin' ? '' : 'd-none'" (click)="onClickAdd()" class="m-2" mat-fab color="primary" aria-label="add button" matTooltip="Agregar un nuevo estudiante">
-      <mat-icon>add</mat-icon>
-    </button>
-        
-    <table #table mat-table [dataSource]="studentsData" class="mat-elevation-z8 px-0 w-100" aria-describedby="Tabla de alumnos">
-    
+<div class="container py-2">
+  <div class="d-flex align-items-end">
+    <h1 appTitles>Listado de estudiantes</h1>
+  </div>
+  <button [ngClass]="user!.rol === 'admin' ? '' : 'd-none'" (click)="onClickAdd()" class="mb-2" mat-fab color="primary" aria-label="add button" matTooltip="Agregar un nuevo estudiante">
+    <mat-icon>add</mat-icon>
+  </button>
+  <div>
+    <table #table mat-table [dataSource]="dataSource" class="mat-elevation-z8 px-0 w-100" aria-describedby="Tabla de alumnos">
+       
       <!-- Id Column -->
       <ng-container matColumnDef="id">
         <th mat-header-cell *matHeaderCellDef> ID </th>
@@ -34,7 +33,7 @@
             <div class="row">
                 <mat-icon (click)="onClickDetails(student)" class="col" aria-hidden="false" aria-label="post_add icon" matTooltip="Ver detalles del estudiante">description</mat-icon>
               <mat-icon [ngClass]="user!.rol === 'admin' ? '' : 'd-none'" (click)="onClickEdit(student)" class="col" aria-hidden="false" aria-label="edit icon" matTooltip="Editar Estudiante">edit</mat-icon>
-              <mat-icon [ngClass]="user!.rol === 'admin' ? '' : 'd-none'" (click)="onDeleteStudent(student)" class="col" aria-hidden="false" aria-label="delete icon" matTooltip="Eliminar Estudiante">delete</mat-icon>
+              <mat-icon [ngClass]="user!.rol === 'admin' ? '' : 'd-none'" (click)="onDeleteStudent(student.id)" class="col" aria-hidden="false" aria-label="delete icon" matTooltip="Eliminar Estudiante">delete</mat-icon>
             </div>
           
         </td>
@@ -44,9 +43,14 @@
       <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
     </table>
 
-    <div *ngIf="studentsData.length === 0" class="container mt-2 d-flex justify-content-center">
-      <h3 class="fw-semibold text-muted">No existen alumnos a listar</h3>
-    </div>
-  
+    <mat-paginator [pageSizeOptions]="[8, 12, 20]"
+                 showFirstLastButtons 
+                 aria-label="Select students of students list">
+    </mat-paginator>
   </div>
+       
+  <div *ngIf="!loading && studentsData.length === 0" class="container mt-2 d-flex justify-content-center">
+    <h3 class="fw-semibold text-muted">No existen alumnos a listar</h3>
+  </div> 
+</div>
   

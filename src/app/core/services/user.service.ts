@@ -1,5 +1,6 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, Observer, of, throwError } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { User } from '../../shared/interfaces/user.interface';
 
 @Injectable({
@@ -7,95 +8,64 @@ import { User } from '../../shared/interfaces/user.interface';
 })
 export class UserService {
 
-  isLoggedIn:boolean = false;
-  //isLoggedIn:boolean = true;
+  //isLoggedIn:boolean = false;
+  isLoggedIn:boolean = true;
 
-  users:User[] = [{
-    id: 1,
-    username: 'Admin',
-    name: 'Maxi',
-    lastname: 'Olea',
-    email: 'molea@mail.com',
-    password: 'admin1234',
-    rol: 'admin'
-  },{
-    id: 2,
-    username: 'User01',
-    name: 'Juan',
-    lastname: 'Perez',
-    email: 'jperez@mail.com',
-    password: 'user1234',
-    rol: 'user'
-  },];
 
-  userData!:User | null;
-  //userData:User | null = {id: 1, username: 'Admin', name: 'Maxi', lastname: 'Olea', rol: 'user'} //user mockeado para pruebas
+  //userData!:User | null;
+  userData:User | null = {id: 1, username: 'Admin', name: 'Maxi', lastname: 'Olea', rol: 'admin'} //user mockeado para pruebas
   usersData:User[] = [];
   userToEdit!:User | null;
 
+  usersUrl = 'https://62aa1e323b314385544268cd.mockapi.io/users/';
 
-  getUsers():Observable<User[]> { //Devuelve un array de los usuarios y sus roles
-    this.usersData = [];
-    this.users.forEach(user => {
-      let userData = {
-        id: user.id,
-        username: user.username,
-        name: user.name,
-        lastname: user.lastname,
-        email: user.email,
-        rol: user.rol
-      }
-      this.usersData.push(userData)
-    });
-    return of(this.usersData)
-  }
+  constructor(
+    private http: HttpClient
+  ) {}
 
   getIsLoggedIn():Observable<boolean> {
     return of(this.isLoggedIn)
+  }
+
+  setIsLoggedIn(isLogged: boolean, user: User | null) {
+    this.isLoggedIn = isLogged;
+    if(user) {
+      this.userData = {
+        id: user.id,
+        name: user.name,
+        lastname: user.lastname,
+        username: user.username,
+        email: user.email,
+        rol: user.rol
+      }
+    } else {
+      this.userData = user;
+    }
   }
 
   logOff() {
     this.isLoggedIn = false;
   }
 
-  checkLogin(username:string, password:string):Observable<boolean> {
-    let user = this.users.find((usr) => usr.username === username)
-    if(user && user.password === password) {
-      this.isLoggedIn = true;
-      this.userData = {
-        id: user.id,
-        username: user.username,
-        name: user.name,
-        lastname: user.lastname,
-        rol: user.rol
-      }
-      return of(this.isLoggedIn);
-    } else {
-      this.isLoggedIn = false;
-      this.userData = null;
-      return of(this.isLoggedIn)
-    }
+  getUsers():Observable<User[]> { //Devuelve un array de los usuarios y sus roles
+    return this.http.get<User[]>(this.usersUrl);
   }
 
-  getUserData():Observable<User|null> {
-    return of(this.userData);
+  getUserById(id: number):Observable<User> {
+    return this.http.get<User>(this.usersUrl + id);
   }
 
-  getUserById(id:number):Observable<User> {
-    let user = this.users.find((usr) => usr.id === id)
-    if(user) {
-      let userData = {
-        id: user.id,
-        username: user.username,
-        name: user.name,
-        lastname: user.lastname,
-        email: user.email,
-        rol: user.rol
-      }
-      return of(userData)
-    }else {
-      return throwError({ message: 'El usuario no existe'})
-    }
+  addUser(user: User):Observable<User> {
+    return this.http.post<User>(this.usersUrl, user);
+  }
+
+  editUser(id:number, user:User):Observable<User> {
+    return this.http.put<User>(this.usersUrl + id, user);
+  }
+
+  deleteUser(id:number):Observable<User> {
+    console.log('el id recibido en el delete: ', id);
+    return this.http.delete<User>(this.usersUrl + id);
   }
 
   getUserToEdit():Observable<User | null> {
@@ -113,36 +83,8 @@ export class UserService {
     })
   }
 
-  setUsers(user:User, isToEdit:boolean):Promise<any> {    
-    return new Promise((resolve, reject) => {
-      if(this.users.length > 0 || this.users !== null) {
-        if(isToEdit){
-          let indexOfUser = this.users.findIndex((usr) => usr.id === user.id);
-          this.users[indexOfUser] = user;
-        } else {
-          this.users.push(user);
-        }
-        return resolve({message: 'Se agrego la información del usuario'})
-      }else {
-        return reject({ message: 'No se pudo actualizar la información de los usuarios'})
-      }
-    })
+  getUserData():Observable<User|null> {
+    return of(this.userData);
   }
 
-  deleteUser(usersData:User[]):Promise<any> {
-    return new Promise((resolve, reject) => {
-      if(this.users.length > 0) {
-        this.users = usersData;
-        return resolve({ message: 'Usuario eliminado' })
-      } else {
-        return reject({ message: 'No se pudo eliminar el usuario' })
-      }
-    })
-  }
-
-  getTime():Observable<string> {
-    return new Observable<string>((observer: Observer<string>) => {
-      setInterval(() => observer.next(new Date().toString()), 1000);
-    });
-  }
 }
