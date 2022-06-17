@@ -71,6 +71,8 @@ export class StudentsListComponent implements OnInit, AfterViewInit, OnDestroy {
         this.studentsData = data
         this.dataSource.data = this.studentsData;
         this.loading = false
+      }, (error) => {
+        this._snackBar.open(`${error} - No se pudo recuperar la información de los alumnos`);
       })
     )
   }
@@ -91,8 +93,8 @@ export class StudentsListComponent implements OnInit, AfterViewInit, OnDestroy {
       this.studentService.deleteStudentById(id).subscribe((res) => {
         console.log('respuesta del delete: ', res)
         this._snackBar.open(`${res.name} ${res.lastname} fue eliminado con exito del listado de alumnos`, 'Ok')
-      }, () => {
-        this._snackBar.open('Se ha producido un error al eliminar el alumno')
+      }, (error) => {
+        this._snackBar.open(`${error} - No se pudo eliminar el alumno`, 'Cerrar');
       })
     );
   }

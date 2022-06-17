@@ -60,6 +60,8 @@ export class UserFormComponent implements OnInit, OnDestroy {
     this.subscriptions.add(
       this.userService.getUsers().subscribe((res) => {
         this.users = res;
+      }, (error) => {
+        this._snackBar.open(`${error} - No se pudo recuperar la información de los usuarios`, 'Cerrar');
       })
     );
     
@@ -74,8 +76,8 @@ export class UserFormComponent implements OnInit, OnDestroy {
         this.userService.editUser(id, user).subscribe((res) => {
           this._snackBar.open(`Se actualizó la información de ${res.username}`);
           this.router.navigate(['dashboard/users']);
-        }, () => {
-          this._snackBar.open('Ocurrió un error al editar la información del usuario');
+        }, (error) => {
+          this._snackBar.open(`${error} - No se pudo editar la información del usuario`, 'Cerrar');
         })
       );
     } else { // si estamos agregando un usuario nuevo
@@ -83,8 +85,8 @@ export class UserFormComponent implements OnInit, OnDestroy {
         this.userService.addUser(this.userForm.value).subscribe((res) => {
           this._snackBar.open(`El usuario ${res.username} se agregó correctamente`, 'Ok');
           this.router.navigate(['dashboard/users']);
-        }, () => {
-          this._snackBar.open('Ocurrió un error al intentar agregar el usuario', 'Cerrar');
+        }, (error) => {
+          this._snackBar.open(`${error} - No se pudo agregar el usuario`, 'Cerrar');
         })
       );
     }

@@ -58,8 +58,8 @@ export class StudentsFormComponent implements OnInit, OnDestroy {
         this.studentService.editStudentById(id, student).subscribe((res) => {
           this._snackBar.open(`Se actualizó la información de ${res.name} ${res.lastname}`, 'OK');
           this.router.navigate(['dashboard/students']);
-        }, () => {
-          this._snackBar.open('Ocurrio un error y no se pudo actualizar la información del usuario', 'Cerrar');
+        }, (error) => {
+          this._snackBar.open(`${error} - No se pudo actualizar la información del usuario`, 'Cerrar');
         })
       );
     } else { // si estamos agregando un usuario nuevo
@@ -67,8 +67,8 @@ export class StudentsFormComponent implements OnInit, OnDestroy {
         this.studentService.addStudent(this.studentForm.value).subscribe((res) => {
           this._snackBar.open(`Se agregó ${res.name} ${res.lastname} a los alumnos`, 'Ok');
           this.router.navigate(['dashboard/students']);
-        }, () => {
-          this._snackBar.open('Ocurrió un error y no se pudo agregar el alumno', 'Cerrar');
+        }, (error) => {
+          this._snackBar.open(`${error} - No se pudo agregar el alumno`, 'Cerrar');
         })
       );
     }

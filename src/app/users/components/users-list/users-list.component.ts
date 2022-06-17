@@ -15,6 +15,7 @@ import { User } from 'src/app/shared/interfaces/user.interface';
 export class UsersListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   subscriptions:Subscription = new Subscription();
+  loading: boolean = false;
 
   @ViewChild(MatTable, { static: false }) table!: MatTable<any>;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -32,6 +33,7 @@ export class UsersListComponent implements OnInit, AfterViewInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
+    this.loading = true;
     this.getUserData();
     this.getUsers();
   }
@@ -53,6 +55,9 @@ export class UsersListComponent implements OnInit, AfterViewInit, OnDestroy {
       this.userService.getUsers().subscribe((users) => {
         this.usersData = users;
         this.dataSource.data = this.usersData;
+        this.loading = false;
+      }, (error) => {
+        this._snackBar.open(`${error} - No se pudo recuperar la informacion de los usuarios`, 'Cerrar');
       })
     )
   }
@@ -94,8 +99,8 @@ export class UsersListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.subscriptions.add(
       this.userService.deleteUser(user.id!).subscribe((userdeleted) => {
         this._snackBar.open(`El usuario ${userdeleted.username} fue eliminado`, 'Ok');
-      }, () => {
-        this._snackBar.open('Ocurrió un error y no se puedo eliminar el usuario', 'Cerrar');
+      }, (error) => {
+        this._snackBar.open(`${error} - No se puedo eliminar el usuario`, 'Cerrar');
       })
     );
   }

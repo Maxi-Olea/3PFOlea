@@ -13,6 +13,7 @@ import { User } from 'src/app/shared/interfaces/user.interface';
 export class UserDetailsComponent implements OnInit, OnDestroy {
 
   subscriptions:Subscription = new Subscription();
+  loading: boolean = false;
 
   user!:User; //Usuario a mostrar los detalles
 
@@ -28,6 +29,7 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
+    this.loading = true;
     this.getUserData();
     this.getUsers();
     this.getUserDetails();
@@ -37,6 +39,8 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
     this.subscriptions.add(
       this.userService.getUsers().subscribe((users) => {
         this.usersData = users;
+      }, (error) => {
+        this._snackBar.open(`${error} - No se pudo recuperar la información de los usuarios`, 'Cerrar');
       })
     )
   }
@@ -53,9 +57,10 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
     let id:number = parseInt(this.route.snapshot.paramMap.get('id') as string);
     this.subscriptions.add(
       this.userService.getUserById(id).subscribe((userData) => {
-        this.user = userData
+        this.user = userData;
+        this.loading = false;
         }, (error) => {
-          this._snackBar.open(error.message, 'Cerrar');
+          this._snackBar.open(`${error} - No se pudo recuperar la información del usuario`, 'Cerrar');
           this.router.navigate(['dashboard/users']);
         })
     )
@@ -79,19 +84,10 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
       this.userService.deleteUser(this.user.id!).subscribe((res) => {
         this._snackBar.open(`el usuario ${res.username} fue eliminado con exito`, 'Ok');
         this.router.navigate(['dashboard/users'])
-      }, () => {
-        this._snackBar.open('Ocurrio un error al eliminar el usuario', 'Cerrar');
+      }, (error) => {
+        this._snackBar.open(`${error} - No se pudo eliminar el usuario`, 'Cerrar');
       })
     );
-  }
-
-  onUpdateDelete(element:any) {
-    /* Una vez editado por el delete, 
-    se modifican los ids (para evitar errores en delete) y ademas hace un update del valor de data */
-    element.forEach((el:any,index:number)=>{
-      el['id']=index+1
-    })
-    this.usersData=element;
   }
 
   ngOnDestroy(): void {

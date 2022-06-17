@@ -1,6 +1,7 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { Courses } from 'src/app/shared/interfaces/course.interface';
 
 @Injectable({
@@ -14,22 +15,34 @@ export class CourseService {
 
   constructor(
     private http: HttpClient
-  ) {}
+  ) {}private handleError(error: HttpErrorResponse) {
+    //Manejo de errores http frontend
+    if(error) {
+      console.warn(`Error de backend: ${error.status}, cuerpo del error: ${error.message}`);
+    }
+    return throwError('Error de comunicación Http');
+  }
+
+
 
   getCourses():Observable<Courses[]> {
-    return this.http.get<Courses[]>(this.apiUrl);
+    return this.http.get<Courses[]>(this.apiUrl)
+    .pipe(catchError(this.handleError));
   }
 
   deleteCourseById(id:number):Observable<Courses> {
-    return this.http.delete<Courses>(this.apiUrl + id);
+    return this.http.delete<Courses>(this.apiUrl + id)
+    .pipe(catchError(this.handleError));
   }
 
   editCourseById(id:number, course: Courses):Observable<Courses> {
-    return this.http.put<Courses>(this.apiUrl + id , course);
+    return this.http.put<Courses>(this.apiUrl + id , course)
+    .pipe(catchError(this.handleError));
   }
 
   addCourse(course: Courses):Observable<Courses> {
-    return this.http.post<Courses>(this.apiUrl, course);
+    return this.http.post<Courses>(this.apiUrl, course)
+    .pipe(catchError(this.handleError));
   }
 
   getCourseToEdit():Observable<Courses | null> {

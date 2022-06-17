@@ -55,8 +55,8 @@ export class CoursesFormComponent implements OnInit, OnDestroy {
         this.courseService.editCourseById(id, course).subscribe((res) => {
           this._snackBar.open(`Se actualizó la información del curso ${res.course}`, 'Ok');
           this.router.navigate(['dashboard/courses']);
-        }, () => {
-          this._snackBar.open('Ocurrió un error y no se pudo actualizar la información de los cursos');
+        }, (error) => {
+          this._snackBar.open(`${error} - No se pudo actualizar la información de los cursos`, 'Cerrar');
         })
       );
     } else { //Si se agrega un curso nuevo
@@ -64,8 +64,8 @@ export class CoursesFormComponent implements OnInit, OnDestroy {
         this.courseService.addCourse(this.courseForm.value).subscribe((res) => {
           this._snackBar.open(`Se agregó el curso ${res.course} exitosamente`, 'Ok');
           this.router.navigate(['dashboard/courses']);
-        }, () => {
-          this._snackBar.open('Ocurrió un error y no se pudo agregar el curso', 'Cerrar');
+        }, (error) => {
+          this._snackBar.open(`${error} - No se pudo agregar el curso`, 'Cerrar');
         })
       );
     }

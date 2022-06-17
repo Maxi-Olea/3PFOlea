@@ -59,6 +59,8 @@ export class InscriptionListComponent implements OnInit, AfterViewInit, OnDestro
         this.studentsData = data
         this.dataSource.data = this.studentsData;
         this.loading = false;
+      }, (error) => {
+        this._snackBar.open(`${error} - No se pudo recuperar la información de los alumnos`, 'Cerrar');
       })
     )
   }

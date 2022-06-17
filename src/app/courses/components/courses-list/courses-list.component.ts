@@ -58,6 +58,8 @@ export class CoursesListComponent implements OnInit, AfterViewInit, OnDestroy {
         this.courses = coursesData;
         this.dataSource.data = this.courses;
         this.loading = false;
+      }, (error) => {
+        this._snackBar.open(`${error} - No se pudo recuperar la información de los cursos`, 'Cerrar');
       })
     )
   }
@@ -90,8 +92,8 @@ export class CoursesListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.subscriptions.add(
       this.courseService.deleteCourseById(course.id).subscribe((res) => {
         this._snackBar.open(`El curso de ${res.course} fue eliminado con exito`, 'Ok');
-      }, () => {
-        this._snackBar.open('Ocurrió un error al intentar eliminar el curso', 'Cerrar');
+      }, (error) => {
+        this._snackBar.open(`${error} - No se pudo eliminar el curso`, 'Cerrar');
       })
     );
   }

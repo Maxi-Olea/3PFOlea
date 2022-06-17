@@ -53,6 +53,8 @@ export class InscriptionFormComponent implements OnInit, OnDestroy {
     this.subscriptions.add(
       this.courseService.getCourses().subscribe((coursesData) => {
         this.courses = coursesData;
+      }, (error) => {
+        this._snackBar.open(`${error} - No se pudo recuperar la información de los cursos`, 'Cerrar');
       })
     );
     // this.studentToEdit!.cursos!.forEach((course) => { //Eliminamos de la lista los cursos a los que ya estaba inscripto
@@ -72,11 +74,10 @@ export class InscriptionFormComponent implements OnInit, OnDestroy {
     let courseToAdd: Courses = this.courses[indexOfCourse];
     this.studentToEdit?.cursos?.push(courseToAdd);
     this.studentService.editStudentById(this.studentToEdit?.id!, this.studentToEdit!).subscribe((res) => {
-      console.log('respuesta de agregar un curso: ', res);
       this._snackBar.open(`Se actualizaron los cursos de ${res.name} ${res.lastname}`, 'Ok');
       this.goBack();
-    }, () => {
-      this._snackBar.open('Ocurrió un error al actualizar la información de los cursos', 'Cerrar');
+    }, (error) => {
+      this._snackBar.open(`${error} - No se pudo actualizar la información de los cursos`, 'Cerrar');
     })
   }
 

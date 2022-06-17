@@ -65,8 +65,8 @@ export class InscriptionsDetailComponent implements OnInit, AfterViewInit, OnDes
         this.student = res;
         this.dataSource.data = this.student.cursos!
         this.loading = false;
-      }, () => {
-        this._snackBar.open('Ocurrió un error recuperando la información del alumno', 'Cerrar');
+      }, (error) => {
+        this._snackBar.open(`${error} - No se pudo recuperar la informacion del alumno`, 'Cerrar');
         this.router.navigate(['dashboard/students']);
       })
     );
@@ -94,8 +94,8 @@ export class InscriptionsDetailComponent implements OnInit, AfterViewInit, OnDes
     this.student.cursos = courses;
     this.studentService.editStudentById(this.student.id, this.student).subscribe((res) => {
       this._snackBar.open(`Se actualizó la información de los cursos de ${res.name} ${res.lastname}`, 'Ok');
-    }, () => {
-      this._snackBar.open('Ocurrió un error al intentar actualizar la información de los cursos del alumno', 'Cerrar');
+    }, (error) => {
+      this._snackBar.open(`${error} - No se pudo actualizar la información de los cursos del alumno`, 'Cerrar');
     })
   }
 

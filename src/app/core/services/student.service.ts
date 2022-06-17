@@ -1,6 +1,7 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { Student } from 'src/app/shared/interfaces/student.interface';
 
 @Injectable({
@@ -16,25 +17,37 @@ export class StudentService {
     private http: HttpClient
   ) {}
 
+  private handleError(error: HttpErrorResponse) {
+    //Manejo de errores http frontend
+    if(error) {
+      console.warn(`Error de backend: ${error.status}, cuerpo del error: ${error.message}`);
+    }
+    return throwError('Error de comunicación Http');
+  }
+
   getStudents():Observable<Student[]> {
-    return this.http.get<Student[]>(this.apiUrl);
+    return this.http.get<Student[]>(this.apiUrl)
+    .pipe(catchError(this.handleError));
   }
 
   getStudentById(id: number): Observable<Student> {
-    return this.http.get<Student>(this.apiUrl + id);
+    return this.http.get<Student>(this.apiUrl + id)
+    .pipe(catchError(this.handleError));
   }
 
   deleteStudentById(id: number): Observable<Student> {
-    return this.http.delete<Student>(this.apiUrl + id);
+    return this.http.delete<Student>(this.apiUrl + id)
+    .pipe(catchError(this.handleError));
   }
 
   editStudentById(id:number, student: Student): Observable<Student> {
-    console.log('El id recibido es: ', id)
-    return this.http.put<Student>(this.apiUrl + id, student);
+    return this.http.put<Student>(this.apiUrl + id, student)
+    .pipe(catchError(this.handleError));
   }
 
   addStudent(student: Student): Observable<Student> {
-    return this.http.post<Student>(this.apiUrl, student);
+    return this.http.post<Student>(this.apiUrl, student)
+    .pipe(catchError(this.handleError));
   }
 
   getStudentToEdit():Observable<Student | null> {
@@ -49,9 +62,7 @@ export class StudentService {
       }else {
         return reject({ message: 'No se pudo setear el studentToEdit' })
       }
-
     });
   }
-
 }
 

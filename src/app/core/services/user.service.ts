@@ -1,6 +1,7 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { User } from '../../shared/interfaces/user.interface';
 
 @Injectable({
@@ -8,12 +9,12 @@ import { User } from '../../shared/interfaces/user.interface';
 })
 export class UserService {
 
-  //isLoggedIn:boolean = false;
-  isLoggedIn:boolean = true;
+  isLoggedIn:boolean = false;
+  //isLoggedIn:boolean = true;
 
 
-  //userData!:User | null;
-  userData:User | null = {id: 1, username: 'Admin', name: 'Maxi', lastname: 'Olea', rol: 'admin'} //user mockeado para pruebas
+  userData!:User | null;
+  //userData:User | null = {id: 1, username: 'Admin', name: 'Maxi', lastname: 'Olea', rol: 'admin'} //user mockeado para pruebas
   usersData:User[] = [];
   userToEdit!:User | null;
 
@@ -22,6 +23,14 @@ export class UserService {
   constructor(
     private http: HttpClient
   ) {}
+
+  private handleError(error: HttpErrorResponse) {
+    //Manejo de errores http frontend
+    if(error) {
+      console.warn(`Error de backend: ${error.status}, cuerpo del error: ${error.message}`);
+    }
+    return throwError('Error de comunicación Http');
+  }
 
   getIsLoggedIn():Observable<boolean> {
     return of(this.isLoggedIn)
@@ -48,24 +57,28 @@ export class UserService {
   }
 
   getUsers():Observable<User[]> { //Devuelve un array de los usuarios y sus roles
-    return this.http.get<User[]>(this.usersUrl);
+    return this.http.get<User[]>(this.usersUrl)
+    .pipe(catchError(this.handleError));
   }
 
   getUserById(id: number):Observable<User> {
-    return this.http.get<User>(this.usersUrl + id);
+    return this.http.get<User>(this.usersUrl + id)
+    .pipe(catchError(this.handleError));
   }
 
   addUser(user: User):Observable<User> {
-    return this.http.post<User>(this.usersUrl, user);
+    return this.http.post<User>(this.usersUrl, user)
+    .pipe(catchError(this.handleError));
   }
 
   editUser(id:number, user:User):Observable<User> {
-    return this.http.put<User>(this.usersUrl + id, user);
+    return this.http.put<User>(this.usersUrl + id, user)
+    .pipe(catchError(this.handleError));
   }
 
   deleteUser(id:number):Observable<User> {
-    console.log('el id recibido en el delete: ', id);
-    return this.http.delete<User>(this.usersUrl + id);
+    return this.http.delete<User>(this.usersUrl + id)
+    .pipe(catchError(this.handleError));
   }
 
   getUserToEdit():Observable<User | null> {

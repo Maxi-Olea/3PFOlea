@@ -46,11 +46,10 @@ export class StudentsDetailsComponent implements OnInit, OnDestroy {
     let id:number = parseInt(this.route.snapshot.paramMap.get('id') as string);
     this.subscriptions.add(
       this.studentService.getStudentById(id).subscribe((res) => {
-        console.log('respuesta del getById: ', res);
         this.student = res;
         this.loading = false;
-      }, () => {
-        this._snackBar.open('Ocurrió un error recuperando la información del alumno', 'Cerrar');
+      }, (error) => {
+        this._snackBar.open(`${error} - No se pudo recuperar la información del alumno`, 'Cerrar');
         this.router.navigate(['dashboard/students']);
       })
     );
@@ -69,8 +68,8 @@ export class StudentsDetailsComponent implements OnInit, OnDestroy {
       this.studentService.deleteStudentById(this.student.id).subscribe((res) => {
         this._snackBar.open(`${res.name} ${res.lastname} fue eliminado con exito del listado de alumnos`, 'Ok');
         this.router.navigate(['dashboard/students']);
-      }, () => {
-        this._snackBar.open('Ocurrió un error y no se pudo eliminar al alumno', 'Cerrar');
+      }, (error) => {
+        this._snackBar.open(`${error} - No se pudo eliminar al alumno`, 'Cerrar');
       })
     );   
   }

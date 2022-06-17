@@ -48,7 +48,7 @@
                  aria-label="Select students of students list">
     </mat-paginator>
   
-    <div *ngIf="usersData.length === 0" class="container mt-2 d-flex justify-content-center">
+    <div *ngIf="!loading && usersData.length === 0" class="container mt-2 d-flex justify-content-center">
       <h3 class="fw-semibold text-muted">No existen usuarios para listar</h3>
     </div>
 
