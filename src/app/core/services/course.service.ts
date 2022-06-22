@@ -30,6 +30,11 @@ export class CourseService {
     .pipe(catchError(this.handleError));
   }
 
+  getCourseById(id:number):Observable<Courses> {
+    return this.http.get<Courses>(this.apiUrl + id)
+    .pipe(catchError(this.handleError));
+  }
+
   deleteCourseById(id:number):Observable<Courses> {
     return this.http.delete<Courses>(this.apiUrl + id)
     .pipe(catchError(this.handleError));

@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { StudentService } from 'src/app/core/services/student.service';
@@ -20,6 +21,7 @@ export class StudentsFormComponent implements OnInit, OnDestroy {
   studentToEdit!: Student | null;
 
   constructor(
+    private titleService: Title,
     private fb: FormBuilder,
     private studentService: StudentService,
     private router: Router,
@@ -34,6 +36,7 @@ export class StudentsFormComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.titleService.setTitle('Formulario de Alumno');
     this.subscriptions.add(
       this.studentService.getStudentToEdit().subscribe((student) => {
         this.studentToEdit = student;

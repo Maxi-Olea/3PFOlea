@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { UserService } from 'src/app/core/services/user.service';
@@ -28,6 +29,7 @@ export class UserFormComponent implements OnInit, OnDestroy {
   roles:Rol[] = [{value:'admin', viewValue:'Administrador'}, {value:'user', viewValue:'Usuario'}];
 
   constructor(
+    private titleService: Title,
     private fb: FormBuilder,
     private userService: UserService,
     private _snackBar: MatSnackBar,
@@ -45,6 +47,7 @@ export class UserFormComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.titleService.setTitle('Formulario de Usuario');
     this.subscriptions.add(
       this.userService.getUserToEdit().subscribe((res) => {
         this.userToEdit = res;

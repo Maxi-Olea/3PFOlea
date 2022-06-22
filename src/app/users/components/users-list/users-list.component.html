@@ -1,8 +1,8 @@
 <div class="container py-3">
 
-    <div class="d-flex align-items-end">
+    <!-- <div class="d-flex align-items-end">
       <h1 appTitles>Listado de usuarios</h1>
-    </div>
+    </div> -->
     <button [ngClass]="usr!.rol === 'admin' ? '' : 'd-none'" (click)="onClickAdd()" class="m-2" mat-fab color="primary" aria-label="add button" matTooltip="Agregar un nuevo usuario">
       <mat-icon>add</mat-icon>
     </button>

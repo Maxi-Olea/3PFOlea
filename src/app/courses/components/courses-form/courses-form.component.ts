@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { CourseService } from 'src/app/core/services/course.service';
@@ -19,6 +20,7 @@ export class CoursesFormComponent implements OnInit, OnDestroy {
   courseToEdit!: Courses | null;
   
   constructor(
+    private titleService: Title,
     private fb: FormBuilder,
     private courseService: CourseService,
     private router: Router,
@@ -32,6 +34,7 @@ export class CoursesFormComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.titleService.setTitle('Formulario de Curso');
     this.subscriptions.add(
       this.courseService.getCourseToEdit().subscribe((course) => {
         this.courseToEdit = course;
@@ -49,6 +52,7 @@ export class CoursesFormComponent implements OnInit, OnDestroy {
     Si es a editar edita el curso segun el id. finalmente actualiza los cursos en el servicio*/
     if(this.courseToEdit) { //Si se edita un curso existente
       this.courseForm.value['id'] = this.courseToEdit.id;
+      this.courseForm.value['students'] = this.courseToEdit.students;
       let id:number = this.courseToEdit.id;
       let course:Courses = this.courseForm.value;
       this.subscriptions.add(
@@ -60,6 +64,7 @@ export class CoursesFormComponent implements OnInit, OnDestroy {
         })
       );
     } else { //Si se agrega un curso nuevo
+      this.courseForm.value['students'] = [];
       this.subscriptions.add(
         this.courseService.addCourse(this.courseForm.value).subscribe((res) => {
           this._snackBar.open(`Se agregó el curso ${res.course} exitosamente`, 'Ok');

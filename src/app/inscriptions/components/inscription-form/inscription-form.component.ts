@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { CourseService } from 'src/app/core/services/course.service';
@@ -24,6 +25,7 @@ export class InscriptionFormComponent implements OnInit, OnDestroy {
   inscriptionForm: FormGroup;
 
   constructor(
+    private titleService: Title,
     private studentService: StudentService,
     private courseService: CourseService,
     private router: Router,
@@ -37,6 +39,7 @@ export class InscriptionFormComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.titleService.setTitle('Formulario de Inscripción');
     this.subscriptions.add(
       this.studentService.getStudentToEdit().subscribe((student) => {
         if(student) {
@@ -73,12 +76,14 @@ export class InscriptionFormComponent implements OnInit, OnDestroy {
     let indexOfCourse = this.courses.findIndex((x) => x.id === this.inscriptionForm.get('course')?.value)
     let courseToAdd: Courses = this.courses[indexOfCourse];
     this.studentToEdit?.cursos?.push(courseToAdd);
-    this.studentService.editStudentById(this.studentToEdit?.id!, this.studentToEdit!).subscribe((res) => {
-      this._snackBar.open(`Se actualizaron los cursos de ${res.name} ${res.lastname}`, 'Ok');
-      this.goBack();
-    }, (error) => {
-      this._snackBar.open(`${error} - No se pudo actualizar la información de los cursos`, 'Cerrar');
-    })
+    this.subscriptions.add(
+      this.studentService.editStudentById(this.studentToEdit?.id!, this.studentToEdit!).subscribe((res) => {
+        this._snackBar.open(`Se actualizaron los cursos de ${res.name} ${res.lastname}`, 'Ok');
+        this.goBack();
+      }, (error) => {
+        this._snackBar.open(`${error} - No se pudo actualizar la información de los cursos`, 'Cerrar');
+      })
+    );
   }
 
   ngOnDestroy(): void {

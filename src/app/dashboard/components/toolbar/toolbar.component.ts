@@ -1,4 +1,5 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { UserService } from 'src/app/core/services/user.service';
 import { User } from 'src/app/shared/interfaces/user.interface';
@@ -11,6 +12,7 @@ import { User } from 'src/app/shared/interfaces/user.interface';
 export class ToolbarComponent {
 
   constructor(
+    public titleService: Title,
     private userService: UserService,
     private router: Router
   ) {}

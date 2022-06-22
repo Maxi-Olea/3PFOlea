@@ -1,8 +1,8 @@
 <div class="container py-3">
 
-    <div class="d-flex align-items-end">
+    <!-- <div class="d-flex align-items-end">
         <h1 appTitles>Listado de cursos</h1>
-      </div>
+      </div> -->
       <button [ngClass]="user!.rol === 'admin' ? '' : 'd-none'" (click)="onClickAdd()" class="m-2" mat-fab color="primary" aria-label="add button" matTooltip="Agregar un nuevo estudiante">
         <mat-icon>add</mat-icon>
       </button>  
@@ -43,8 +43,9 @@
         <th mat-header-cell *matHeaderCellDef> Acciones </th>
         <td mat-cell *matCellDef="let course">
             <div class="d-flex justify-content-between">
+              <mat-icon (click)="onClickDetails(course)" class="col" aria-hidden="false" aria-label="post_add icon" matTooltip="Ver detalles del curso">description</mat-icon>
               <mat-icon [ngClass]="user!.rol === 'admin' ? '' : 'd-none'" (click)="onClickEdit(course)" class="col" aria-hidden="false" aria-label="edit icon" matTooltip="Editar curso">edit</mat-icon>
-              <mat-icon [ngClass]="user!.rol === 'admin' ? '' : 'd-none'" (click)="onClickDelete(course)" aria-hidden="false" aria-label="delete icon" matTooltip="Eliminar curso">delete</mat-icon>
+              <mat-icon [ngClass]="user!.rol === 'admin' ? '' : 'd-none'" (click)="onClickDelete(course)" class="col" aria-hidden="false" aria-label="delete icon" matTooltip="Eliminar curso">delete</mat-icon>
             </div>
           
         </td>

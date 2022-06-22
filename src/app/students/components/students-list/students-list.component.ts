@@ -9,6 +9,7 @@ import { User } from 'src/app/shared/interfaces/user.interface';
 import { map } from 'rxjs/operators'
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatPaginator } from '@angular/material/paginator';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-students-list',
@@ -32,6 +33,7 @@ export class StudentsListComponent implements OnInit, AfterViewInit, OnDestroy {
   dataSource = new MatTableDataSource<Student>();
 
   constructor(
+    private titleService: Title,
     private userService: UserService,
     private studentService: StudentService,
     private router: Router,
@@ -39,6 +41,7 @@ export class StudentsListComponent implements OnInit, AfterViewInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
+    this.titleService.setTitle('Alumnos')
     this.loading = true;
     this.getUserData();
     this.getStudents();

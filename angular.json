@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "APIRESTOlea": {
+    "TercerPFOlea": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -20,7 +20,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/APIRESTOlea",
+            "outputPath": "dist/TercerPFOlea",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
@@ -78,10 +78,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "APIRESTOlea:build:production"
+              "browserTarget": "TercerPFOlea:build:production"
             },
             "development": {
-              "browserTarget": "APIRESTOlea:build:development"
+              "browserTarget": "TercerPFOlea:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -89,7 +89,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "APIRESTOlea:build"
+            "browserTarget": "TercerPFOlea:build"
           }
         },
         "test": {
@@ -114,5 +114,5 @@
       }
     }
   },
-  "defaultProject": "APIRESTOlea"
+  "defaultProject": "TercerPFOlea"
 }

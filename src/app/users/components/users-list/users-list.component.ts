@@ -2,6 +2,7 @@ import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
+import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { UserService } from 'src/app/core/services/user.service';
@@ -27,12 +28,14 @@ export class UsersListComponent implements OnInit, AfterViewInit, OnDestroy {
   dataSource = new MatTableDataSource();
   
   constructor(
+    private titleService: Title,
     private userService: UserService,
     private router: Router,
     private _snackBar: MatSnackBar
   ) { }
 
   ngOnInit(): void {
+    this.titleService.setTitle('Usuarios');
     this.loading = true;
     this.getUserData();
     this.getUsers();

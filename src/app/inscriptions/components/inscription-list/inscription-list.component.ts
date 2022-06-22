@@ -2,6 +2,7 @@ import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
+import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { StudentService } from 'src/app/core/services/student.service';
@@ -29,6 +30,7 @@ export class InscriptionListComponent implements OnInit, AfterViewInit, OnDestro
   dataSource = new MatTableDataSource();
 
   constructor(
+    private titleService: Title,
     private userService: UserService,
     private studentService: StudentService,
     private router: Router,
@@ -36,6 +38,7 @@ export class InscriptionListComponent implements OnInit, AfterViewInit, OnDestro
   ) { }
 
   ngOnInit(): void {
+    this.titleService.setTitle('Inscripciones');
     this.loading = true;
     this.getUserData();
     this.getStudents();

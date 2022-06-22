@@ -2,6 +2,7 @@ import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
+import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { CourseService } from 'src/app/core/services/course.service';
@@ -28,6 +29,7 @@ export class CoursesListComponent implements OnInit, AfterViewInit, OnDestroy {
   dataSource = new MatTableDataSource();
 
   constructor(
+    private titleService: Title,
     private userService: UserService,
     private courseService: CourseService,
     private router: Router,
@@ -35,6 +37,7 @@ export class CoursesListComponent implements OnInit, AfterViewInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
+    this.titleService.setTitle('Cursos');
     this.loading = true;
     this.getUserData();
     this.getCourses();
@@ -68,6 +71,10 @@ export class CoursesListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.courseService.setCourseToEdit(null)
     .then(() => this.router.navigate(['dashboard/courses/addcourse']))
     .catch((error) => this._snackBar.open(error.message, 'Cerrar'));
+  }
+
+  onClickDetails(course:Courses) {
+    this.router.navigate([`dashboard/courses/${course.id}`]);
   }
 
   onClickEdit(course: Courses) { //actualiza el curso a editar en el servicio

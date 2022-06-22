@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { UserService } from 'src/app/core/services/user.service';
@@ -22,6 +23,7 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
   usr!:User | null; //datos del usuario que esta logueado en este momento
 
   constructor(
+    private titleService: Title,
     private route: ActivatedRoute,
     private router: Router,
     private userService: UserService,
@@ -29,6 +31,7 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
+    this.titleService.setTitle('Detalles del Usuario');
     this.loading = true;
     this.getUserData();
     this.getUsers();
